@@ -101,7 +101,7 @@ class _BoardViewScreenState extends State<BoardView>
   bool checkTapcount = false;
   bool checkInternet = false;
   double checkinOp = 1;
-  String? coordinates  = "";
+  String? coordinates = "";
   var imageLogin = "";
   double checkOutOpacity = 0.3;
   double startDayOp = 1;
@@ -171,35 +171,67 @@ class _BoardViewScreenState extends State<BoardView>
   Future<void> getValues() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
+
+    var jsonResponse = null;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    id = await preferences.getString("id").toString();
+
+    Map data = {'agn_code': id};
+
+
+
+
+try {
+  var response = await http.post(
+      Uri.parse(
+          base_Url + "alkhair/public/api/v1/agent/check-status"),
+      body: data);
+
+  if (response.statusCode == 200) {
+    jsonResponse = json.decode(response.body);
+    print(jsonResponse["message"]);
+    if (jsonResponse["message"] == false) {
+      SharedPreferences preferences =
+      await SharedPreferences.getInstance();
+      await preferences.clear();
+      while (Navigator.canPop(context) == true) {
+        Navigator.pop(context);
+      }
+
+      onStop();
+
+
+      preferences.remove("isLogin");
+      preferences.setBool("isLogin", false);
+      preferences.clear();
+      Navigator.pop(context);
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => LoginPage()));
+    }
+  }
+}
+catch(e)
+    {
+      print(e);
+    }
+
+
     var now = new DateTime.now();
     var berlinWallFellDate = new DateTime.now();
-print(now);
+    print(now);
 
     String formattedTime = DateFormat.Hms().format(now);
     print(formattedTime);
 
-    if(formattedTime.compareTo("00:00:00")==0)
-      {
+    if (formattedTime.compareTo("00:00:00") == 0) {
+      newDate = await preferences.getString("checkOutTime")!;
+      print(newDate);
 
-        newDate = await preferences.getString("checkOutTime")!;
-        print(newDate);
+      String xyz = await preferences.getString("time")!;
+      await preferences.setString("SessionDay", xyz);
 
-
-String xyz =  await preferences.getString("time")!;
-     await preferences.setString( "SessionDay", xyz);
-
-
-        await preferences.setString("checkOutTime","")!;
-
-
-
-
-      }
-    else
-      {
-
-
-      }
+      await preferences.setString("checkOutTime", "")!;
+    } else {}
     zone = await preferences.getString("zone")!;
     designation = await preferences.getString("designation")!;
     email = await preferences.getString("email").toString();
@@ -207,14 +239,13 @@ String xyz =  await preferences.getString("time")!;
     name = await preferences.getString("name").toString();
     login = await preferences.getBool("isLogin")!;
 
-    try{
-    coordinates = await preferences.getString("location_key");
 
 
-    }catch(e)
-    {
-print(e);
 
+    try {
+      coordinates = await preferences.getString("location_key");
+    } catch (e) {
+      print(e);
     }
     try {
       start_day = await preferences.getString("startDay")!;
@@ -245,8 +276,7 @@ print(e);
 
     try {
       checkTapcount = await preferences.getBool("CheckIn")!;
-          checkEndDay = await preferences.getBool("SessionDay")!;
-
+      checkEndDay = await preferences.getBool("SessionDay")!;
     } catch (e) {}
 
     try {} catch (e) {}
@@ -296,14 +326,7 @@ print(e);
   Future<bool> CheckOutSubmit(List<LatLng> latlng, String newDate) async {
     onStop();
 
-
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
-
-
-
-
 
     final _isRunning = await BackgroundLocator.isServiceRunning();
 
@@ -317,7 +340,6 @@ print(e);
     now = DateTime.now();
     formatter = DateFormat('yyyy-MM-dd');
 
-
     //  latlng = (await loadData())!;
 
     try {
@@ -329,8 +351,6 @@ print(e);
     } catch (e) {
       print(e);
     }
-
-
 
     // removeData();
 
@@ -621,14 +641,9 @@ print(e);
 
   Future<void> updateUI(LocationDto data) async {
     await _updateNotificationText(data);
-try {
-  saveData(data.latitude, data.longitude);
-}
-catch(e)
-    {
-
-
-    }
+    try {
+      saveData(data.latitude, data.longitude);
+    } catch (e) {}
     setState(() {
       if (data != null) {
         lastLocation = data;
@@ -654,15 +669,13 @@ catch(e)
   }
 
   void _onStart() async {
+    await _startLocator();
+    final _isRunning = await BackgroundLocator.isServiceRunning();
 
-      await _startLocator();
-      final _isRunning = await BackgroundLocator.isServiceRunning();
-
-      setState(() {
-        isRunning = _isRunning;
-        lastLocation = null;
-      });
-
+    setState(() {
+      isRunning = _isRunning;
+      lastLocation = null;
+    });
   }
 
   Future<void> _updateNotificationText(LocationDto data) async {
@@ -737,19 +750,16 @@ catch(e)
     var serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       SharedPreferences preferences = await SharedPreferences.getInstance();
-      await preferences.clear();
-      while (Navigator.canPop(context) == true) {
-        Navigator.pop(context);
-      }
+      // await preferences.clear();
 
       //onStop();
 
-      preferences.remove("isLogin");
-      preferences.setBool("isLogin", false);
-      preferences.clear();
+      //preferences.remove("isLogin");
+      //preferences.setBool("isLogin", false);
+      //preferences.clear();
 
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => LoginPage()));
+      //  Navigator.push(
+      //    context, MaterialPageRoute(builder: (context) => LoginPage()));
     }
   }
 
@@ -759,12 +769,11 @@ catch(e)
   void initState() {
     initConnectivity();
 
-
     _addMarker(LatLng(currentPostion.latitude, currentlongitude), "origin",
         BitmapDescriptor.defaultMarker);
 
     if (IsolateNameServer.lookupPortByName(
-        LocationServiceRepository.isolateName) !=
+            LocationServiceRepository.isolateName) !=
         null) {
       IsolateNameServer.removePortNameMapping(
           LocationServiceRepository.isolateName);
@@ -774,14 +783,10 @@ catch(e)
         port.sendPort, LocationServiceRepository.isolateName);
 
     port.listen(
-          (dynamic data) async {
+      (dynamic data) async {
         try {
           await updateUI(data);
-        }
-        catch(e)
-        {
-
-        }
+        } catch (e) {}
         //  await loadData(latlng);
       },
     );
@@ -914,7 +919,6 @@ catch(e)
                           sharedPreferences.setBool(
                               "ShouldDisplay", shouldDisplay);
                           sharedPreferences.remove("location_key");
-
 
                           _getUserLocation();
                           sharedPreferences.setDouble(
@@ -1284,15 +1288,13 @@ catch(e)
                                               fontFamily: 'Raleway'),
                                         ),
                                         Text(
-                                          "End Day: " + "\n"
-
-                                          +"\n" + _splitString(checkoutDate)
-                                          ,
-
+                                          "End Day: " +
+                                              "\n" +
+                                              "\n" +
+                                              _splitString(checkoutDate),
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.normal,
-
                                               fontSize: 16,
                                               fontFamily: 'Raleway'),
                                         ),
@@ -1414,7 +1416,6 @@ catch(e)
   }
 
   void dispose() {
-
     super.dispose();
   }
 

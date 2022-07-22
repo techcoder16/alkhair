@@ -6,7 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:workmanager/workmanager.dart';
+
 import 'dart:convert';
 
 import 'plugins/constglobal.dart';
@@ -157,7 +157,6 @@ bool permissionGranted =false;
 
       while (Navigator.canPop(context) == true) {Navigator.pop(context);}
 
-      Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
 
 
 
@@ -310,21 +309,6 @@ bool permissionGranted =false;
                               if(await _determinePosition()== true && permissionGranted == true ) {
 
 
-
-                                Workmanager().registerPeriodicTask(
-                                  "",
-
-                                    simplePeriodicTask,
-
-                                    initialDelay: Duration(seconds: 10),
-
-                                    inputData: <String, dynamic>{
-
-                                            'string': 'Sync Data',
-
-
-
-                                    });
 
 
 

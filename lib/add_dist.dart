@@ -1186,7 +1186,7 @@ if(x==1) {
                             TextField(
                               controller: _distributorNameController,
                               decoration: const InputDecoration(
-                                  labelText: 'Distributor Name',
+                                  labelText: 'Distributor Name *',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1248,7 +1248,7 @@ if(x==1) {
                               controller: _distributorContactNumController,
                               decoration: const InputDecoration(
                                   prefixText: '+92 ',
-                                  labelText: 'Contact Number',
+                                  labelText: 'Contact Number *',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1292,7 +1292,7 @@ if(x==1) {
                             TextField(
                               controller: _distributorAddressController,
                               decoration: const InputDecoration(
-                                  labelText: 'Address',
+                                  labelText: 'Address *',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1327,7 +1327,7 @@ if(x==1) {
                                       borderSide:
                                           BorderSide(color: Colors.white),
                                     ),
-                                    labelText: 'City',
+                                    labelText: 'City *',
                                     labelStyle: TextStyle(
                                         fontFamily: 'Raleway',
                                         fontWeight: FontWeight.normal,
@@ -1351,7 +1351,7 @@ if(x==1) {
                             TextField(
                               controller: _distributorShopNameController,
                               decoration: const InputDecoration(
-                                  labelText: 'Shop Name',
+                                  labelText: 'Shop Name *',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1378,7 +1378,7 @@ if(x==1) {
                                   enabledBorder: UnderlineInputBorder(
                                     borderSide: BorderSide(color: Colors.white),
                                   ),
-                                  labelText: 'Distributor Type',
+                                  labelText: 'Distributor Type *',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1411,7 +1411,7 @@ if(x==1) {
                                   width: 10,
                                 ), //SizedBox
                                 Text(
-                                  'Working with Us (Yes/No) ',
+                                  'Working with Us (Yes/No) * ',
                                   style: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1466,7 +1466,7 @@ if(x==1) {
                                         color: Colors.grey,
                                       ),
                                       title: Text(
-                                        "Brands",
+                                        "Brands *",
                                         style: TextStyle(
                                             fontFamily: 'Raleway',
                                             fontWeight: FontWeight.normal,
@@ -1541,7 +1541,7 @@ if(x==1) {
                             TextField(
                               controller: _distributorFloorController,
                               decoration: const InputDecoration(
-                                  labelText: 'Floor ',
+                                  labelText: 'Floor *',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1560,7 +1560,7 @@ if(x==1) {
                                     color: Colors.grey),
                                 Container(
                                   alignment: Alignment.centerLeft,
-                                  child: Text('Shop Size',
+                                  child: Text('Shop Size *',
                                       style: TextStyle(
                                           fontFamily: 'Raleway',
                                           fontWeight: FontWeight.normal,
@@ -1584,7 +1584,7 @@ if(x==1) {
                                     ],
                                     controller: _distributorShopSizeControllerw,
                                     decoration: const InputDecoration(
-                                        labelText: 'Width (In feet)',
+                                        labelText: 'Width (In feet) *',
                                         labelStyle: TextStyle(
                                             fontFamily: 'Raleway',
                                             fontWeight: FontWeight.normal,
@@ -1613,7 +1613,7 @@ if(x==1) {
                                     ],
                                     controller: _distributorShopSizeController,
                                     decoration: const InputDecoration(
-                                        labelText: 'Depth (In feet)',
+                                        labelText: 'Depth (In feet) *',
                                         labelStyle: TextStyle(
                                             fontFamily: 'Raleway',
                                             fontWeight: FontWeight.normal,
@@ -1642,7 +1642,7 @@ if(x==1) {
                               ],
                               controller: _distributorSaleController,
                               decoration: const InputDecoration(
-                                  labelText: 'Covered Sale',
+                                  labelText: 'Covered Sale *',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1687,7 +1687,7 @@ if(x==1) {
                               },
                               controller: _distributorUSaleController,
                               decoration: const InputDecoration(
-                                  labelText: 'Uncovered Sale ',
+                                  labelText: 'Uncovered Sale *',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1706,7 +1706,7 @@ if(x==1) {
                               ],
                               controller: _distributorTotalSaleController,
                               decoration: const InputDecoration(
-                                  labelText: 'Total Sale ',
+                                  labelText: 'Total Sale *',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1730,7 +1730,7 @@ if(x==1) {
                             TextField(
                               controller: _distributorCardLimitController,
                               decoration: const InputDecoration(
-                                  labelText: 'Credit Limit ',
+                                  labelText: 'Credit Limit *',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1752,7 +1752,7 @@ if(x==1) {
                               textAlign: TextAlign.justify,
                               controller: _distributorCompaniesController,
                               decoration: const InputDecoration(
-                                  labelText: 'Other Brands',
+                                  labelText: 'Other Brands *',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
