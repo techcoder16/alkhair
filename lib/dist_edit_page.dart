@@ -42,87 +42,81 @@ class EditDistributor extends StatefulWidget {
   final bool status;
   final String lanlat;
   final String ddistributor_type;
- final String dname;
+  final String dname;
   final String did;
- final String shop_name;
- final String demail;
- final String cnic;
- final String address;
- final String city;
- final String coordinates;
+  final String shop_name;
+  final String demail;
+  final String cnic;
+  final String address;
+  final String city;
+  final String coordinates;
 
- final String shop_size;
- final String floor;
- final String owned;
+  final String shop_size;
+  final String floor;
+  final String owned;
 
- final String covered_sale;
- final String uncovered_sale;
- final String total_sale;
+  final String covered_sale;
+  final String uncovered_sale;
+  final String total_sale;
 
- final String credit_limit;
+  final String credit_limit;
 
- final String companies_working_with;
- final String working_with_us;
+  final String companies_working_with;
+  final String working_with_us;
 
- final String our_brands;
+  final String our_brands;
 
- final String contact_no_1;
- final String contact_no_2;
- final String password;
+  final String contact_no_1;
+  final String contact_no_2;
+  final String password;
 
- final String password_confirmation;
- final String added_by;
- final String avatar;
-final String width;
-final String depth;
-final String dst_code;
+  final String password_confirmation;
+  final String added_by;
+  final String avatar;
+  final String width;
+  final String depth;
+  final String dst_code;
   final String zone;
   final String designation;
 
-
-  const EditDistributor(
-      {Key? key,
-        required this.id,
-        required this.email,
-        required this.name,
-        required this.status,
-        required this.lanlat,
-        required this.zone,
-        required this.designation,
-
-
-        required this.ddistributor_type,
-        required this.dname,
-        required this.shop_name,
-        required this.demail,
-        required this.cnic,
-        required this.address,
-        required this.city,
-        required this.coordinates,
-        required this.shop_size,
-        required this.floor,
-        required this.owned,
-        required this.covered_sale,
-        required this.uncovered_sale,
-        required this.total_sale,
-        required this.credit_limit,
-        required this.companies_working_with,
-        required this.working_with_us,
-        required this.our_brands,
-        required this.contact_no_1,
-        required this.contact_no_2,
-        required this.password,
-        required this.password_confirmation,
-        required this.added_by,
-        required this.avatar,
-
-        required this.did,     required this.width,
-        required this.depth,    required this.dst_code,
-
-
-
-      })
-      : super(key: key);
+  const EditDistributor({
+    Key? key,
+    required this.id,
+    required this.email,
+    required this.name,
+    required this.status,
+    required this.lanlat,
+    required this.zone,
+    required this.designation,
+    required this.ddistributor_type,
+    required this.dname,
+    required this.shop_name,
+    required this.demail,
+    required this.cnic,
+    required this.address,
+    required this.city,
+    required this.coordinates,
+    required this.shop_size,
+    required this.floor,
+    required this.owned,
+    required this.covered_sale,
+    required this.uncovered_sale,
+    required this.total_sale,
+    required this.credit_limit,
+    required this.companies_working_with,
+    required this.working_with_us,
+    required this.our_brands,
+    required this.contact_no_1,
+    required this.contact_no_2,
+    required this.password,
+    required this.password_confirmation,
+    required this.added_by,
+    required this.avatar,
+    required this.did,
+    required this.width,
+    required this.depth,
+    required this.dst_code,
+  }) : super(key: key);
 
   @override
   _editDistributorState createState() => _editDistributorState();
@@ -166,44 +160,45 @@ class _editDistributorState extends State<EditDistributor> {
   String assertiveURL =
       base_Url + "alkhair/storage/app/public/images/distributors/";
 
-
   late int value_type;
+  late String stringDistributorValueType="";
+
   final TextEditingController _distributorCompaniesController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _distributorCardLimitController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _distributorTotalSaleController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _distributorUSaleController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _distributorShopSizeController =
-  TextEditingController();
+      TextEditingController();
 
   final TextEditingController _distributorFloorController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _distributorShopSizeControllerw =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _distributorSaleController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _distributorContactTController =
-  TextEditingController();
+      TextEditingController();
 
   final TextEditingController _distributorNameController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _distributorShopNameController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _distributorEmailController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _distributorCNICController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _distributorContactNumController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _distributorAddressController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _distributorCityController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _distributorCoordinatesController =
-  TextEditingController();
+      TextEditingController();
 
   Position? position;
   late ProgressDialog pr;
@@ -226,18 +221,28 @@ class _editDistributorState extends State<EditDistributor> {
 
   Future getGalleryImage() async {
     var image =
-    await ImagePicker.platform.pickImage(source: ImageSource.gallery);
+        await ImagePicker.platform.pickImage(source: ImageSource.gallery);
 
     setState(() {
       _image = image as File;
       Navigator.pop(context);
     });
   }
+  int validateMobile(String value) {
+    String pattern = r'(^(?:[0-9]9)?[0-9]{10,12}$)';
+    RegExp regExp = new RegExp(pattern);
+    if (value.length == 0) {
+      return 0;
+    }
+    else if (value.length==10) {
+      return 1;
+    }
+    return 0;
+  }
+
 
   Future<void> getValues() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-
-
   }
 
   //============================== Image from gallery
@@ -285,9 +290,13 @@ class _editDistributorState extends State<EditDistributor> {
       id,
       bool valueCheck2,
       bool valueCheck,
-      List<XFile>? attachments, int valueType, String did, String width,depth) async {
+      List<XFile>? attachments,
+      int valueType,
+      String did,
+      String width,
+      depth) async {
     attachments?.forEach((element) {
-      print(element.path);
+
     });
     initConnectivity();
 
@@ -296,6 +305,11 @@ class _editDistributorState extends State<EditDistributor> {
     coordinates =
         position.latitude.toString() + "," + position.longitude.toString();
 
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+
+
+    id = await preferences.getString("id").toString();
 
 
     Map<String, String> data = {
@@ -309,9 +323,8 @@ class _editDistributorState extends State<EditDistributor> {
       'coordinates': coordinates.toString(),
       'added_by': id.toString(),
       'shop_size': shopsize,
-      'width':width,
-      'depth':depth,
-
+      'width': width,
+      'depth': depth,
       'floor': floor,
       'owned': valueCheck == true ? "1" : "0",
       'covered_sale': sale,
@@ -326,107 +339,73 @@ class _editDistributorState extends State<EditDistributor> {
       'password': "000000",
       "password_confirmation": "000000",
       'added_by': id,
-      'dst_code':did
-
+      'dst_code': did
     };
 
+    http.MultipartRequest request = http.MultipartRequest("POST",
+        Uri.parse(base_Url + "alkhair/public/api/v1/agent/UpdateDistributor"));
 
+    Map<String, String> headers = {"Content-Type": "application/json"};
 
+    int x = 0;
+    attachments!.forEach((element) async {
+      if (element.path.contains("http")) {
+        final http.Response responseData =
+            await http.get(Uri.parse(assertiveURL + element.path));
+        Uint8List uint8list = responseData.bodyBytes;
 
+        uint8list = responseData.bodyBytes;
+        var buffer = uint8list.buffer;
+        ByteData byteData = ByteData.view(buffer);
+        var tempDir = await getTemporaryDirectory();
+        File file1 = await File('${tempDir.path}/img' + x.toString())
+            .writeAsBytes(buffer.asUint8List(
+                byteData.offsetInBytes, byteData.lengthInBytes));
 
-      http.MultipartRequest request = http.MultipartRequest(
-          "POST",
-          Uri.parse(
-              base_Url + "alkhair/public/api/v1/agent/UpdateDistributor"));
-
-      Map<String, String> headers = {"Content-Type": "application/json"};
-
-
-int x =0;
-      attachments!.forEach((element) async {
-
-        if(element.path.contains("http"))
-          {
-
-
-            final http.Response responseData = await http.get(Uri.parse(assertiveURL + element.path));
-            Uint8List uint8list = responseData.bodyBytes;
-
-            uint8list = responseData.bodyBytes;
-            var buffer = uint8list.buffer;
-            ByteData byteData = ByteData.view(buffer);
-            var tempDir = await getTemporaryDirectory();
-            File file1 = await File('${tempDir.path}/img'+x.toString()).writeAsBytes(
-                buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-
-try {
-  request.files
-      .add(await http.MultipartFile.fromPath('avatar[]', file1.path));
-}
-catch(e)
-        {
-
-        }
-
-
-          }
-        else {
-          try {
-
-
-            request.files
-                .add(
-                await http.MultipartFile.fromPath('avatar[]', element.path));
-          }
-          catch (e) {
-
-          }
-        }
-      });
-
-
-      request.headers.addAll(headers);
-      request.fields.addAll(data);
-
-      pr.show();
-
-      http.StreamedResponse response = await request.send();
-      final respStr = await response.stream.bytesToString();
-
-print(response.reasonPhrase);
-      if (response.statusCode == 200) {
-        // success
-        if (pr.isShowing()) {
-          pr.hide();
-        }
-        final decodedMap = json.decode(respStr);
         try {
-          print(decodedMap['message']);
-          showAlertDialog(context, "Alert", decodedMap['message']);
-        }
-        catch(e)
-    {
-      print(e);
-
-    }
-
-
+          request.files
+              .add(await http.MultipartFile.fromPath('avatar[]', file1.path));
+        } catch (e) {}
       } else {
-        if (pr.isShowing()) {
-          pr.hide();
-        }
+        try {
+          request.files
+              .add(await http.MultipartFile.fromPath('avatar[]', element.path));
+        } catch (e) {}
+      }
+    });
 
-        // error
-        showAlertDialog(context, "Alert", "Distributor Cannot be Added!");
+    request.headers.addAll(headers);
+    request.fields.addAll(data);
+
+    pr.show();
+
+    http.StreamedResponse response = await request.send();
+    final respStr = await response.stream.bytesToString();
+
+
+    if (response.statusCode == 200) {
+      // success
+      if (pr.isShowing()) {
+        pr.hide();
+      }
+      final decodedMap = json.decode(respStr);
+
+      try {
+
+        showAlertDialog(context, "Alert", decodedMap['message'],0,pr);
+      } catch (e) {
+        print(e);
+      }
+    } else {
+      if (pr.isShowing()) {
+        pr.hide();
       }
 
-      return true;
+      // error
+      showAlertDialog(context, "Alert", "Customer Cannot be Edited!",0,pr);
+    }
 
-
-
-
-
-
+    return true;
   }
 
   ///  ===================== internet check ===================================
@@ -436,7 +415,8 @@ print(response.reasonPhrase);
       _connectionStatus = result;
     });
   }
-  var typesDist =  <String>['Distributor', 'Dealer', 'Retailer'];
+
+  var typesDist = <String>['Distributor', 'Dealer', 'Retailer'];
 
   Future<void> initConnectivity() async {
     late ConnectivityResult result;
@@ -463,12 +443,10 @@ print(response.reasonPhrase);
 
   ///  ===================== internet check ===================================
 
-
   Future<void> updateUI(LocationDto data) async {
     await _updateNotificationText(data);
     latlng.add(LatLng(data.latitude, data.longitude));
-    print("int dist");
-    print(latlng);
+
     saveData(data.latitude, data.longitude);
 
     setState(() {
@@ -490,88 +468,64 @@ print(response.reasonPhrase);
   }
 
   @override
-  void initState()  {
-
-    _distributorCoordinatesController.text =  widget.coordinates.toString();
-    _distributorNameController.text=      widget.dname;
-    _distributorShopNameController.text =widget.shop_name;
+  void initState() {
+    _distributorCoordinatesController.text = widget.coordinates.toString();
+    _distributorNameController.text = widget.dname;
+    _distributorShopNameController.text = widget.shop_name;
     _distributorEmailController.text = widget.demail;
-    _distributorCNICController.text =widget.cnic;
-    _distributorContactNumController.text =widget.contact_no_1;
+    _distributorCNICController.text = widget.cnic;
+    _distributorContactNumController.text = widget.contact_no_1;
 
-    _distributorAddressController.text =widget.address;
+    _distributorAddressController.text = widget.address;
 
-    _value =widget.city;
+    _value = widget.city;
 
     _distributorCoordinatesController.text = widget.coordinates;
 
+    _distributorCompaniesController.text = widget.companies_working_with;
+    _distributorCardLimitController.text = widget.credit_limit;
+    _distributorTotalSaleController.text = widget.total_sale;
+    _distributorUSaleController.text = widget.uncovered_sale;
 
-    _distributorCompaniesController
-
-        .text = widget.companies_working_with;
-    _distributorCardLimitController
-        .text =widget.credit_limit;
-    _distributorTotalSaleController
-        .text =widget.total_sale;
-    _distributorUSaleController.text  = widget.uncovered_sale;
-
-
-    _distributorFloorController.text =widget.floor;
-    _distributorSaleController.text =widget.covered_sale;
-    _distributorContactTController.text =widget.contact_no_2;
-    _value_brand =widget.our_brands;
-
-
-
-
+    _distributorFloorController.text = widget.floor;
+    _distributorSaleController.text = widget.covered_sale;
+    _distributorContactTController.text = widget.contact_no_2;
+    _value_brand = widget.our_brands;
 
     _distributorShopSizeControllerw.text = widget.width;
     _distributorShopSizeController.text = widget.depth;
 
+    value_type = int.parse(widget.ddistributor_type);
 
-    value_type  =int.parse( widget.ddistributor_type);
-
+    stringDistributorValueType = widget.ddistributor_type;
 
     var spBrand = widget.our_brands.split(",");
     var spImage = widget.avatar.split(",");
-try {
-  fileOne = XFile(assertiveURL + spImage[0]);
-  fileTwo = XFile(assertiveURL + spImage[1]);
-  fileThree = XFile(assertiveURL + spImage[2]);
 
-
-
-
-
-
-
-}
-catch(e)
-    {
+    try {
+      fileOne = XFile(assertiveURL + spImage[0]);
+      fileTwo = XFile(assertiveURL + spImage[1]);
+      fileThree = XFile(assertiveURL + spImage[2]);
+    } catch (e) {
       print(e);
     }
 
-
-    if(spBrand.length <1) {
+    if (spBrand.length < 1) {
       fileOne = XFile(assertiveURL + spImage[0]);
     }
 
-    if(spBrand.length <1) {
-  _selectedBrands.add(new Brands(id: 0, name: spBrand[0]));
-}
-   else if(spBrand.length >1 && spBrand.length<2) {
+    if (spBrand.length < 1) {
+      _selectedBrands.add(new Brands(id: 0, name: spBrand[0]));
+    } else if (spBrand.length > 1 && spBrand.length < 2) {
       _selectedBrands.add(new Brands(id: 0, name: spBrand[0]));
 
       _selectedBrands.add(new Brands(id: 1, name: spBrand[1]));
-    }
-
-
-  else  if(spBrand.length <3 && spBrand.length >2)  {
+    } else if (spBrand.length < 3 && spBrand.length > 2) {
       _selectedBrands.add(new Brands(id: 0, name: spBrand[0]));
 
       _selectedBrands.add(new Brands(id: 1, name: spBrand[1]));
 
-      _selectedBrands.add(new Brands( id: 2, name: spBrand[2]));
+      _selectedBrands.add(new Brands(id: 2, name: spBrand[2]));
     }
 
 
@@ -579,26 +533,19 @@ catch(e)
 
 
 
-
-
-
-    if(value_check_2=widget.working_with_us == "1" )
-    {v1=true;}
-
-    else
-    {v2=true;
+    if (value_check_2 = widget.working_with_us == "1") {
+      v1 = true;
+    } else {
+      v2 = true;
     }
-    if(value_check=widget.owned == "1" )
-
-    {v3=true;}
-
-    else
-    {v3=true;
+    if (value_check = widget.owned == "1") {
+      v3 = true;
+    } else {
+      v3 = true;
     }
-
 
     port.listen(
-          (dynamic data) async {
+      (dynamic data) async {
         await updateUI(data);
       },
     );
@@ -607,7 +554,7 @@ catch(e)
 
     _cityitems = List.generate(
       dataList.length,
-          (i) => "${dataList[i]["name"]}",
+      (i) => "${dataList[i]["name"]}",
     );
   }
 
@@ -635,61 +582,94 @@ catch(e)
   final TextEditingController maxHeightController = TextEditingController();
   final TextEditingController qualityController = TextEditingController();
 
+  bool _fieldValidator = false;
+  String _errorMessage = '';
+  String _errorFieldMessage = '';
+  bool _emailValidator = true;
+  bool _passwordValidator = true;
+
+
+  int validateField(String val) {
+    if(val.isEmpty){
+      setState(() {
+        _errorFieldMessage = "";
+        _fieldValidator = false;
+
+
+      });
+      return 0;
+
+    }
+    else
+    {    setState(() {
+      _errorFieldMessage = "";
+      _fieldValidator = true;
+
+
+    });
+    return 1;
+
+    }
+    return 0;
+  }
+
+
+
   Future<void> _onImageButtonPressed(ImageSource source, int value,
       {BuildContext? context, bool isMultiImage = false}) async {
     if (isMultiImage) {
       await _displayPickImageDialog(context!,
-              (double? maxWidth, double? maxHeight, int? quality) async {
-            try {
-              final List<XFile>? pickedFileList = await _picker.pickMultiImage(
-                maxWidth: maxWidth,
-                maxHeight: maxHeight,
-                imageQuality: quality,
-              );
-              setState(() {
-                if (value == 1) {
-                  fileOne = pickedFileList![0];
-                } else if (value == 2) {
-                  fileTwo = pickedFileList![0];
-                } else if (value == 3) {
-                  fileThree = pickedFileList![0];
-                }
-
-                pr.isShowing() == true ? pr.hide() : '';
-              });
-            } catch (e) {
-              setState(() {
-                _pickImageError = e;
-              });
+          (double? maxWidth, double? maxHeight, int? quality) async {
+        try {
+          final List<XFile>? pickedFileList = await _picker.pickMultiImage(
+            maxWidth: maxWidth,
+            maxHeight: maxHeight,
+            imageQuality: quality,
+          );
+          setState(() {
+            if (value == 1) {
+              fileOne = pickedFileList![0];
+            } else if (value == 2) {
+              fileTwo = pickedFileList![0];
+            } else if (value == 3) {
+              fileThree = pickedFileList![0];
             }
+
+            pr.isShowing() == true ? pr.hide() : '';
           });
+        } catch (e) {
+          setState(() {
+            _pickImageError = e;
+          });
+        }
+      });
     } else {
       await _displayPickImageDialog(context!,
-              (double? maxWidth, double? maxHeight, int? quality) async {
-            try {
-              final XFile? pickedFile = await _picker.pickImage(
-                source: source,
-                maxWidth: maxWidth,
-                maxHeight: maxHeight,
-                imageQuality: quality,
-              );
-              setState(() {
-                if (value == 1) {
-                  fileOne = pickedFile!;
-                } else if (value == 2) {
-                  fileTwo = pickedFile!;
-                } else if (value == 3) {
-                  fileThree = pickedFile!;
-                }
-
-                pr.isShowing() == true ? pr.hide() : '';
-              });
-            } catch (e) {
-              setState(() {
-                _pickImageError = e;
-              });
+          (double? maxWidth, double? maxHeight, int? quality) async {
+        try {
+          final XFile? pickedFile = await _picker.pickImage(
+            source: source,
+            maxWidth: maxWidth,
+            maxHeight: maxHeight,
+            imageQuality: quality,
+          );
+          setState(() {
+            if (value == 1) {
+              fileOne = pickedFile!;
+            } else if (value == 2) {
+              fileTwo = pickedFile!;
+            } else if (value == 3) {
+              fileThree = pickedFile!;
             }
+
+            pr.isShowing() == true ? pr.hide() : '';
           });
+        } catch (e) {
+          setState(() {
+            _pickImageError = e;
+          });
+        }
+      });
     }
   }
 
@@ -704,9 +684,6 @@ catch(e)
 
   Widget _previewImages() {
     final Text? retrieveError = _getRetrieveErrorWidget();
-
-    print(fileOne.runtimeType);
-    print(fileOne!.path);
 
     if (retrieveError != null) {
       return retrieveError;
@@ -724,14 +701,14 @@ catch(e)
                 kIsWeb
                     ? Image.network(fileOne!.path, fit: BoxFit.fill)
                     : fileOne.runtimeType == XFile &&
-                    fileOne?.path != 'assets/noimage.png'
-                    ?   fileOne!.path.contains("http:") == true ? Image.network(fileOne!.path) :Image.file(
-
-                  File(fileOne!.path)
-                  ,
-                  fit: BoxFit.fill,
-                )
-                    : Image.network(fileOne!.path),
+                            fileOne?.path != 'assets/noimage.png'
+                        ? fileOne!.path.contains("http:") == true
+                            ? Image.network(fileOne!.path)
+                            : Image.file(
+                                File(fileOne!.path),
+                                fit: BoxFit.fill,
+                              )
+                        : Image.network(fileOne!.path),
                 Positioned(
                   right: 5,
                   top: 25,
@@ -783,12 +760,14 @@ catch(e)
                 kIsWeb
                     ? Image.network(fileTwo!.path, fit: BoxFit.fill)
                     : fileTwo.runtimeType == XFile &&
-                    fileTwo?.path != 'assets/noimage.png'
-                    ? fileTwo!.path.contains("http:") == true ? Image.network(fileTwo!.path) : Image.file(
-                  File(fileTwo!.path),
-                  fit: BoxFit.fill,
-                )
-                    : Image.asset(fileTwo!.path),
+                            fileTwo?.path != 'assets/noimage.png'
+                        ? fileTwo!.path.contains("http:") == true
+                            ? Image.network(fileTwo!.path)
+                            : Image.file(
+                                File(fileTwo!.path),
+                                fit: BoxFit.fill,
+                              )
+                        : Image.asset(fileTwo!.path),
                 Positioned(
                   right: 5,
                   top: 25,
@@ -840,12 +819,14 @@ catch(e)
                 kIsWeb
                     ? Image.network(fileThree!.path, fit: BoxFit.fill)
                     : fileThree.runtimeType == XFile &&
-                    fileThree?.path != 'assets/noimage.png'
-                    ? fileThree!.path.contains("http:") == true ? Image.network(fileThree!.path) : Image.file(
-                  File(fileThree!.path),
-                  fit: BoxFit.fill,
-                )
-                    : Image.asset(fileThree!.path),
+                            fileThree?.path != 'assets/noimage.png'
+                        ? fileThree!.path.contains("http:") == true
+                            ? Image.network(fileThree!.path)
+                            : Image.file(
+                                File(fileThree!.path),
+                                fit: BoxFit.fill,
+                              )
+                        : Image.asset(fileThree!.path),
                 Positioned(
                   right: 5,
                   top: 25,
@@ -1076,9 +1057,6 @@ catch(e)
           color: Colors.grey),
     );
 
-
-
-
     return FutureBuilder(
         future: Future.wait([getValues()]),
         builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
@@ -1090,11 +1068,9 @@ catch(e)
                   email: widget.email,
                   name: widget.name,
                   latlng: latlng,
-              zone:widget.zone,
-                designation:widget.designation
-
-              ),
-              resizeToAvoidBottomInset: false,
+                  zone: widget.zone,
+                  designation: widget.designation),
+              resizeToAvoidBottomInset: true,
               body: SingleChildScrollView(
                 physics: BouncingScrollPhysics(),
                 child: Column(
@@ -1138,7 +1114,7 @@ catch(e)
 
                     Container(
                         padding:
-                        EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
+                            EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
                         child: Column(
                           children: <Widget>[
                             Column(children: <Widget>[
@@ -1150,51 +1126,51 @@ catch(e)
                                 height: 120,
                                 width: 300,
                                 child: !kIsWeb &&
-                                    defaultTargetPlatform ==
-                                        TargetPlatform.android
+                                        defaultTargetPlatform ==
+                                            TargetPlatform.android
                                     ? FutureBuilder<void>(
-                                  future: retrieveLostData(),
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot<void> snapshot) {
-                                    switch (snapshot.connectionState) {
-                                      case ConnectionState.none:
-                                      case ConnectionState.waiting:
-                                        return const Padding(
-                                          padding: EdgeInsets.fromLTRB(
-                                              10,
-                                              10,
-                                              20,
-                                              20), //apply padding to LTRB, L:Left, T:Top, R:Right, B:Bottom
-                                          child: Text("No Image yet"),
-                                        );
-                                      case ConnectionState.done:
-                                        return SizedBox(
-                                            height: 10,
-                                            width: 10,
-                                            child: _handlePreview());
-                                      default:
-                                        if (snapshot.hasError) {
-                                          return Text(
-                                            'Pick image/video error: ${snapshot.error}}',
-                                            textAlign: TextAlign.center,
-                                          );
-                                        } else {
-                                          return const Padding(
-                                            padding: EdgeInsets.fromLTRB(
-                                                10,
-                                                10,
-                                                20,
-                                                20), //apply padding to LTRB, L:Left, T:Top, R:Right, B:Bottom
-                                            child: Text("No Image yet"),
-                                          );
-                                        }
-                                    }
-                                  },
-                                )
+                                        future: retrieveLostData(),
+                                        builder: (BuildContext context,
+                                            AsyncSnapshot<void> snapshot) {
+                                          switch (snapshot.connectionState) {
+                                            case ConnectionState.none:
+                                            case ConnectionState.waiting:
+                                              return const Padding(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    10,
+                                                    10,
+                                                    20,
+                                                    20), //apply padding to LTRB, L:Left, T:Top, R:Right, B:Bottom
+                                                child: Text("No Image yet"),
+                                              );
+                                            case ConnectionState.done:
+                                              return SizedBox(
+                                                  height: 10,
+                                                  width: 10,
+                                                  child: _handlePreview());
+                                            default:
+                                              if (snapshot.hasError) {
+                                                return Text(
+                                                  'Pick image/video error: ${snapshot.error}}',
+                                                  textAlign: TextAlign.center,
+                                                );
+                                              } else {
+                                                return const Padding(
+                                                  padding: EdgeInsets.fromLTRB(
+                                                      10,
+                                                      10,
+                                                      20,
+                                                      20), //apply padding to LTRB, L:Left, T:Top, R:Right, B:Bottom
+                                                  child: Text("No Image yet"),
+                                                );
+                                              }
+                                          }
+                                        },
+                                      )
                                     : SizedBox(
-                                    height: 10,
-                                    width: 10,
-                                    child: _handlePreview()),
+                                        height: 10,
+                                        width: 10,
+                                        child: _handlePreview()),
                               ),
                               /*  Column(
                                 mainAxisAlignment: MainAxisAlignment.end,
@@ -1220,7 +1196,7 @@ catch(e)
                             TextField(
                               controller: _distributorNameController,
                               decoration: const InputDecoration(
-                                  labelText: 'Distributor Name',
+                                  labelText: 'Customer Name *',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1229,13 +1205,21 @@ catch(e)
                                   focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color:
-                                          Color.fromRGBO(55, 75, 167, 1)))),
+                                              Color.fromRGBO(55, 75, 167, 1)))),
+                              onChanged: (value)
+                              {
+
+                                validateField(value);
+
+                              },
+
+
                             ),
                             SizedBox(height: 20.0),
                             TextField(
                               controller: _distributorEmailController,
                               decoration: const InputDecoration(
-                                  labelText: 'EMAIL',
+                                  labelText: 'Email',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1244,7 +1228,16 @@ catch(e)
                                   focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color:
-                                          Color.fromRGBO(55, 75, 167, 1)))),
+                                              Color.fromRGBO(55, 75, 167, 1)))),
+
+                              onChanged: (value)
+                              {
+
+                                validateField(value);
+
+                              },
+
+
                             ),
                             SizedBox(height: 20.0),
                             TextField(
@@ -1263,8 +1256,18 @@ catch(e)
                                   focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color:
-                                          Color.fromRGBO(55, 75, 167, 1)))),
+                                              Color.fromRGBO(55, 75, 167, 1)))),
                               keyboardType: TextInputType.number,
+
+                              onChanged: (value)
+                              {
+
+                                validateField(value);
+
+                              },
+
+
+
                             ),
                             SizedBox(height: 20.0),
                             TextField(
@@ -1272,10 +1275,14 @@ catch(e)
                                 FilteringTextInputFormatter.digitsOnly,
                                 new LengthLimitingTextInputFormatter(10),
                               ],
+                              maxLength: 10,
+                              maxLengthEnforcement:      MaxLengthEnforcement.enforced,
+
                               controller: _distributorContactNumController,
                               decoration: const InputDecoration(
+
                                   prefixText: '+92 ',
-                                  labelText: 'Contact Number',
+                                  labelText: 'Contact Number *',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1284,8 +1291,17 @@ catch(e)
                                   focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color:
-                                          Color.fromRGBO(55, 75, 167, 1)))),
+                                              Color.fromRGBO(55, 75, 167, 1)))),
                               keyboardType: TextInputType.number,
+                              onChanged: (value)
+                              {
+
+                                validateField(value);
+
+                              },
+
+
+
                             ),
                             SizedBox(height: 20.0),
                             TextField(
@@ -1293,6 +1309,8 @@ catch(e)
                                 FilteringTextInputFormatter.digitsOnly,
                                 new LengthLimitingTextInputFormatter(10),
                               ],
+                              maxLengthEnforcement:MaxLengthEnforcement.enforced,
+                              maxLength: 10,
                               controller: _distributorContactTController,
                               decoration: const InputDecoration(
                                   prefixText: '+92 ',
@@ -1305,14 +1323,24 @@ catch(e)
                                   focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color:
-                                          Color.fromRGBO(55, 75, 167, 1)))),
+                                              Color.fromRGBO(55, 75, 167, 1)))),
                               keyboardType: TextInputType.number,
+
+                              onChanged: (value)
+                              {
+
+                                validateField(value);
+
+                              },
+
+
+
                             ),
                             SizedBox(height: 20.0),
                             TextField(
                               controller: _distributorAddressController,
                               decoration: const InputDecoration(
-                                  labelText: 'Address',
+                                  labelText: 'Address *',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1321,7 +1349,18 @@ catch(e)
                                   focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color:
-                                          Color.fromRGBO(55, 75, 167, 1)))),
+                                              Color.fromRGBO(55, 75, 167, 1)))),
+
+                              onChanged: (value)
+                              {
+
+                                validateField(value);
+
+                              },
+
+
+
+
                             ),
                             SizedBox(height: 20.0),
 
@@ -1338,9 +1377,9 @@ catch(e)
                                     contentPadding: const EdgeInsets.all(0.0),
                                     enabledBorder: UnderlineInputBorder(
                                       borderSide:
-                                      BorderSide(color: Colors.white),
+                                          BorderSide(color: Colors.white),
                                     ),
-                                    labelText: 'City',
+                                    labelText: 'City *',
                                     labelStyle: TextStyle(
                                         fontFamily: 'Raleway',
                                         fontWeight: FontWeight.normal,
@@ -1352,17 +1391,27 @@ catch(e)
                                                 55, 75, 167, 1)))),
                                 items: _cityitems,
 
+                           selectedItem: _value,
+
                                 onChanged: (value) => setState(() {
+
                                   _value = value!;
+
+
+                                    validateField(value);
+
+
+
+
+
                                 }),
                               ),
                             ),
 
-
                             TextField(
                               controller: _distributorShopNameController,
                               decoration: const InputDecoration(
-                                  labelText: 'Shop Name',
+                                  labelText: 'Shop Name *',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1371,18 +1420,19 @@ catch(e)
                                   focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color:
-                                          Color.fromRGBO(55, 75, 167, 1)))),
+                                              Color.fromRGBO(55, 75, 167, 1)))),
                             ),
                             SizedBox(height: 20.0),
 
                             DropdownButtonFormField<String>(
-                              decoration:   InputDecoration(
+
+                              decoration: InputDecoration(
                                   contentPadding: const EdgeInsets.all(0.0),
                                   enabledBorder: UnderlineInputBorder(
-                                    borderSide:
-                                    BorderSide(color: Colors.white),
+                                    borderSide: BorderSide(color: Colors.white),
                                   ),
-                                  labelText: 'Distributor Type',
+                                  labelText: 'Customer Type *',
+
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1390,30 +1440,29 @@ catch(e)
                                   icon: Icon(Icons.location_city),
                                   focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
-                                          color: Color.fromRGBO(
-                                              55, 75, 167, 1)))),
-
-                              items:typesDist.map((String value) {
+                                          color:
+                                              Color.fromRGBO(55, 75, 167, 1)))),
 
 
-
-
-
+                              items: typesDist.map((String value) {
                                 return DropdownMenuItem<String>(
 
-                                  value:value ,
+                                  value: value,
                                   child: Text(value),
                                 );
                               }).toList(),
+
                               onChanged: (value) {
-
-                                value_type =  typesDist.indexOf(value!);
-
+                                setState(() {
+                                  value_type = typesDist.indexOf(value!);
+                                  stringDistributorValueType = value;
+                                });
 
                               },
 
-                            )
-                            ,
+                              value:  typesDist[value_type] ?? null,
+
+                            ),
                             SizedBox(height: 20.0),
                             Row(
                               children: <Widget>[
@@ -1436,7 +1485,7 @@ catch(e)
                                   onChanged: (bool? value) {
                                     setState(() {
                                       this.value_check_2 = value!;
-                                      print(value_check_2);
+
                                       v2 = false;
                                       v1 = true;
                                     });
@@ -1457,8 +1506,6 @@ catch(e)
                               ], //<Widget>[]
                             ),
 
-
-
                             const SizedBox(height: 20.0),
                             Visibility(
                               visible: v1,
@@ -1471,16 +1518,14 @@ catch(e)
                                   Expanded(
                                     child: MultiSelectDialogField(
                                       initialValue: _selectedBrands,
-
                                       items: _items,
+
                                       selectedColor: Colors.grey,
                                       buttonIcon: Icon(
                                         Icons.account_circle,
                                         color: Colors.grey,
                                       ),
-
                                       title: Text(
-
                                         "Brands",
                                         style: TextStyle(
                                             fontFamily: 'Raleway',
@@ -1494,6 +1539,7 @@ catch(e)
                                           fontSize: 16,
                                         ),
                                       ),
+
                                       onConfirm: (List<Brands> results) {
                                         _selectedBrands = results;
                                       },
@@ -1548,7 +1594,7 @@ catch(e)
                             TextField(
                               controller: _distributorFloorController,
                               decoration: const InputDecoration(
-                                  labelText: 'Floor ',
+                                  labelText: 'Floor *',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1557,7 +1603,7 @@ catch(e)
                                   focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color:
-                                          Color.fromRGBO(55, 75, 167, 1)))),
+                                              Color.fromRGBO(55, 75, 167, 1)))),
                               keyboardType: TextInputType.number,
                             ),
                             SizedBox(height: 10.0),
@@ -1591,7 +1637,7 @@ catch(e)
                                     ],
                                     controller: _distributorShopSizeControllerw,
                                     decoration: const InputDecoration(
-                                        labelText: 'Width (In feet)',
+                                        labelText: 'Width (In feet) *',
                                         labelStyle: TextStyle(
                                             fontFamily: 'Raleway',
                                             fontWeight: FontWeight.normal,
@@ -1613,7 +1659,7 @@ catch(e)
                                     ],
                                     controller: _distributorShopSizeController,
                                     decoration: const InputDecoration(
-                                        labelText: 'Depth (In feet)',
+                                        labelText: 'Depth (In feet) *',
                                         labelStyle: TextStyle(
                                             fontFamily: 'Raleway',
                                             fontWeight: FontWeight.normal,
@@ -1636,7 +1682,7 @@ catch(e)
                               ],
                               controller: _distributorSaleController,
                               decoration: const InputDecoration(
-                                  labelText: 'Covered Sale',
+                                  labelText: 'Covered Sale *',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1645,7 +1691,7 @@ catch(e)
                                   focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color:
-                                          Color.fromRGBO(55, 75, 167, 1)))),
+                                              Color.fromRGBO(55, 75, 167, 1)))),
                               keyboardType: TextInputType.number,
                             ),
                             SizedBox(height: 20.0),
@@ -1663,8 +1709,8 @@ catch(e)
                                 }
 
                                 double value = double.parse(
-                                    _distributorSaleController.text
-                                        .toString()) +
+                                        _distributorSaleController.text
+                                            .toString()) +
                                     double.parse(_distributorUSaleController
                                         .text
                                         .toString());
@@ -1674,7 +1720,7 @@ catch(e)
                               },
                               controller: _distributorUSaleController,
                               decoration: const InputDecoration(
-                                  labelText: 'Uncovered Sale ',
+                                  labelText: 'Uncovered Sale *',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1683,7 +1729,7 @@ catch(e)
                                   focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color:
-                                          Color.fromRGBO(55, 75, 167, 1)))),
+                                              Color.fromRGBO(55, 75, 167, 1)))),
                               keyboardType: TextInputType.number,
                             ),
                             SizedBox(height: 20.0),
@@ -1693,7 +1739,7 @@ catch(e)
                               ],
                               controller: _distributorTotalSaleController,
                               decoration: const InputDecoration(
-                                  labelText: 'Total Sale ',
+                                  labelText: 'Total Sale *',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1702,7 +1748,7 @@ catch(e)
                                   focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color:
-                                          Color.fromRGBO(55, 75, 167, 1)))),
+                                              Color.fromRGBO(55, 75, 167, 1)))),
                               keyboardType: TextInputType.number,
                             ),
 
@@ -1710,7 +1756,7 @@ catch(e)
                             TextField(
                               controller: _distributorCardLimitController,
                               decoration: const InputDecoration(
-                                  labelText: 'Credit Limit ',
+                                  labelText: 'Credit Limit *',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1721,7 +1767,7 @@ catch(e)
                                   focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color:
-                                          Color.fromRGBO(55, 75, 167, 1)))),
+                                              Color.fromRGBO(55, 75, 167, 1)))),
                               keyboardType: TextInputType.number,
                             ),
                             SizedBox(height: 20.0),
@@ -1732,7 +1778,7 @@ catch(e)
                               textAlign: TextAlign.justify,
                               controller: _distributorCompaniesController,
                               decoration: const InputDecoration(
-                                  labelText: 'Other Brands',
+                                  labelText: 'Other Brands *',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1741,25 +1787,27 @@ catch(e)
                                   focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color:
-                                          Color.fromRGBO(55, 75, 167, 1)))),
+                                              Color.fromRGBO(55, 75, 167, 1)))),
                             ),
 
-
                             const SizedBox(height: 20.0),
-                           Visibility(visible: false,child:  TextField(
-                              controller: _distributorCoordinatesController,
-                              decoration: InputDecoration(
-                                  labelText: 'Coordinates',
-                                  labelStyle: TextStyle(
-                                      fontFamily: 'Raleway',
-                                      fontWeight: FontWeight.normal,
-                                      color: Colors.grey),
-                                  icon: Icon(Icons.add_location_alt_sharp),
-                                  focusedBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color:
-                                          Color.fromRGBO(55, 75, 167, 1)))),
-                            ),),
+                            Visibility(
+                              visible: false,
+                              child: TextField(
+                                controller: _distributorCoordinatesController,
+                                decoration: InputDecoration(
+                                    labelText: 'Coordinates',
+                                    labelStyle: TextStyle(
+                                        fontFamily: 'Raleway',
+                                        fontWeight: FontWeight.normal,
+                                        color: Colors.grey),
+                                    icon: Icon(Icons.add_location_alt_sharp),
+                                    focusedBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Color.fromRGBO(
+                                                55, 75, 167, 1)))),
+                              ),
+                            ),
 
                             SizedBox(height: 20.0),
 
@@ -1771,77 +1819,118 @@ catch(e)
                                 shadowColor: Colors.blueAccent,
                                 color: Color.fromRGBO(55, 75, 167, 1),
                                 elevation: 7.0,
-                                child: GestureDetector(
+                                child: InkWell(
                                   onTap: () {
-                                    List dataList = CitiesJson["data"]["list"];
-                                    var valueSizeShop =
-                                        _distributorShopSizeController.text +
-                                            "," +
-                                            _distributorShopSizeControllerw
-                                                .text;
 
-                                    _imageFileList![0] =
-                                    (fileOne?.path != "assets/noimage.png"
-                                        ? fileOne
-                                        : XFile("abc def"))!;
-                                    _imageFileList![1] =
-                                    (fileTwo?.path != "assets/noimage.png"
-                                        ? fileTwo
-                                        : XFile("abc def"))!;
-                                    _imageFileList![2] =
-                                    (fileThree?.path != "assets/noimage.png"
-                                        ? fileThree
-                                        : XFile("abc def"))!;
+                                    int x = 1;
+                                    x =  x * validateField(_distributorShopSizeController.text);
+                                    x = x * validateField(_distributorShopNameController.text);
 
-                                    _selectedBrands.forEach((element) {
-                                      _value_brand +=
-                                          element.name.toString() + ",";
-                                    });
+                                    x = x * validateField(_distributorSaleController.text);
 
-                                    submit(
-                                        _distributorNameController.text,
-                                        _distributorShopNameController.text,
-                                        _distributorEmailController.text,
-                                        _distributorCNICController.text,
-                                        _distributorContactNumController
-                                            .text,
-                                        _distributorAddressController.text,
-                                        _value,
-                                        _distributorCoordinatesController
-                                            .text,
-                                        _distributorCompaniesController
-                                            .text,
-                                        _distributorCardLimitController
-                                            .text,
-                                        _distributorTotalSaleController
-                                            .text,
-                                        _distributorUSaleController.text,
-                                        valueSizeShop.toString(),
-                                        _distributorFloorController.text,
-                                        _distributorSaleController.text,
-                                        _distributorContactTController.text,
-                                        _value_brand,
-                                        widget.id,
-                                        value_check_2,
-                                        value_check,
-                                        _imageFileList,
-                                        value_type,
-                                        widget.dst_code
+                                    x = x *  validateField(_distributorNameController.text);
 
-                                        ,
-                                      widget.width,
-                                      widget.depth
-                                        )
-                                        .then((value) {
-                                      setState(() {
-                                        saveAdress = value;
-                                        _selectedBrands = [];
-                                        _value_brand = "";
+                                    x = x *     validateField(_distributorShopNameController.text);
 
+                                    x = x *      validateField(_distributorContactNumController.text);
+                                    x = x *     validateField(_distributorAddressController.text,);
+                                    x = x *      validateField(  _distributorUSaleController.text      );
+                                    x = x *    validateField(  _distributorFloorController.text      );
+                                    x = x *     validateField(  _distributorTotalSaleController.text      );
+                                    x = x *   validateField(  _distributorCardLimitController.text      );
+                                    x = x *   validateField(  _distributorShopSizeControllerw.text      );
+
+                                    x = x * validateMobile(_distributorContactNumController.text);
+                                    x = x * validateMobile(_distributorContactTController.text);
+
+                                    x = x *
+                                        validateField(
+                                            _distributorCompaniesController
+                                                .text);
+
+
+
+                                    if (x == 0) {
+                                      showAlertDialog(
+                                          context, "Alert", "Field Missing", x,pr);
+                                      return;
+                                    }
+                                    else {
+                                      List dataList = CitiesJson["data"]["list"];
+                                      var valueSizeShop =
+                                          _distributorShopSizeController.text +
+                                              "," +
+                                              _distributorShopSizeControllerw
+                                                  .text;
+
+                                      try {
+                                      _imageFileList![0] =
+                                      (fileOne?.path != "assets/noimage.png"
+                                          ? fileOne
+                                          : XFile("abc def"))!;
+                                      _imageFileList![1] =
+                                      (fileTwo?.path != "assets/noimage.png"
+                                          ? fileTwo
+                                          : XFile("abc def"))!;
+                                      _imageFileList![2] =
+                                      (fileThree?.path != "assets/noimage.png"
+                                          ? fileThree
+                                          : XFile("abc def"))!;
+
+                                      _selectedBrands.forEach((element) {
+                                        _value_brand +=
+                                            element.name.toString() + ",";
                                       });
-                                    });
+
+          } catch (e) {
+          showAlertDialog(context, "Alert",
+          "Image not found", 0,pr);
+          return;
+          }
+
+                                      submit(
+                                          _distributorNameController.text,
+                                          _distributorShopNameController.text,
+                                          _distributorEmailController.text,
+                                          _distributorCNICController.text,
+                                          _distributorContactNumController
+                                              .text,
+                                          _distributorAddressController.text,
+                                          _value,
+                                          _distributorCoordinatesController
+                                              .text,
+                                          _distributorCompaniesController
+                                              .text,
+                                          _distributorCardLimitController
+                                              .text,
+                                          _distributorTotalSaleController
+                                              .text,
+                                          _distributorUSaleController.text,
+                                          valueSizeShop.toString(),
+                                          _distributorFloorController.text,
+                                          _distributorSaleController.text,
+                                          _distributorContactTController.text,
+                                          _value_brand,
+                                          widget.id,
+                                          value_check_2,
+                                          value_check,
+                                          _imageFileList,
+                                          value_type,
+                                          widget.dst_code,
+                                          widget.width,
+                                          widget.depth)
+                                          .then((value) {
+                                        setState(() {
+                                          saveAdress = value;
+                                          _selectedBrands = [];
+                                          _value_brand = "";
+                                        });
+                                      });
+
+
 
                                     _selectedBrands = [];
+                                    }
 
                                   },
                                   child: const Center(

@@ -28,11 +28,11 @@ class NavBar extends StatelessWidget {
 
   NavBar(
       {Key? key,
-      required this.status,
-      required this.id,
-      required this.latlng,
-      required this.name,
-      required this.email,    required this.zone,
+        required this.status,
+        required this.id,
+        required this.latlng,
+        required this.name,
+        required this.email,    required this.zone,
 
         required this.designation})
       : super(key: key);
@@ -54,9 +54,10 @@ class NavBar extends StatelessWidget {
     idNav = preferences.getString("id")!;
 
     nameNav = preferences.getString("name")!;
+    print(nameNav);
     loginNav = preferences.getBool("isLogin")!;
     zoneNav = preferences.getString("zone")!;
-        designationNav =  preferences.getString("designation")!;
+    designationNav =  preferences.getString("designation")!;
 
     timeNav = preferences.getString("time")!;
     latlngNav = LatLng(await preferences.getDouble("LocationLattitude")!,
@@ -82,17 +83,24 @@ class NavBar extends StatelessWidget {
               future: getValues(),
               builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                 return UserAccountsDrawerHeader(
-                  accountName: Text(id),
+                  accountName: Text(nameNav),
                   accountEmail: Text(email),
+                  /*accountNumber: Text("aaa"),*/
                   currentAccountPicture: CircleAvatar(
                     backgroundColor: Colors.white,
                     radius: 100.0,
                     child: ClipOval(
-                      child: Image.asset(
-                        'assets/splash.png',
-                        fit: BoxFit.fill,
-                        width: 300,
-                        height: 300,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => BoardView()));
+                        },
+                        child: Image.asset(
+                          'assets/splash.png',
+                          fit: BoxFit.fill,
+                          width: 300,
+                          height: 300,
+                        ),
                       ),
                     ),
                   ),
@@ -132,35 +140,11 @@ class NavBar extends StatelessWidget {
 
 
 
+
+
           ListTile(
             leading: Icon(Icons.supervisor_account),
-            title: Text('Distributors Edit'),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => EditAgentList(id: id,)
-                  )
-
-
-
-              );
-            },
-          ),
-
-          ListTile(
-            leading: Icon(Icons.add_comment),
-            title: Text('Add Remarks'),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => CommentPage(id:this.id)));
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.supervisor_account),
-            title: Text('Distributors'),
+            title: Text('Customers'),
             onTap: () {
               Navigator.push(
                   context,
@@ -180,7 +164,7 @@ class NavBar extends StatelessWidget {
             },
           ),
 
-       /*   ListTile(
+          /*   ListTile(
             leading: Icon(Icons.settings),
             title: Text('End Day'),
             onTap: () {
@@ -210,7 +194,7 @@ class NavBar extends StatelessWidget {
             leading: Icon(Icons.exit_to_app),
             onTap: () async {
               SharedPreferences preferences =
-                  await SharedPreferences.getInstance();
+              await SharedPreferences.getInstance();
               await preferences.clear();
               while (Navigator.canPop(context) == true) {
                 Navigator.pop(context);

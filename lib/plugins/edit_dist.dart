@@ -14,8 +14,26 @@ import 'global.dart';
 
 class EditAgentList extends StatefulWidget {
   final String id;
+  final String email;
+  final String name;
 
-  const EditAgentList({Key? key, required this.id}) : super(key: key);
+  final bool status;
+  final LatLng lanlat;
+  final String zone;
+
+  final String desgination;
+
+  const EditAgentList(
+      {Key? key,
+        required this.id,
+        required this.email,
+        required this.name,
+        required this.status,
+        required this.lanlat,
+        required this.zone,
+        required this.desgination})
+      : super(key: key);
+
 
   @override
   _agentEditListState createState() => _agentEditListState();
@@ -112,8 +130,8 @@ class _agentEditListState extends State<EditAgentList> {
           agentIterator["updated_at"].toString(),
           agentIterator["depth"].toString(),
           agentIterator["width"].toString(),
-        );
 
+        );
 
         agentsList.add(agent);
       }
@@ -251,7 +269,7 @@ class _agentEditListState extends State<EditAgentList> {
                                 onPressed: () =>
                                     _scaffoldKey.currentState?.openDrawer(),
                               ),
-                              title: Text('Al Khair'),
+                              title: Text('Al-Khair Gadoon'),
                               actions: const <Widget>[],
                             ),
                             Container(
@@ -260,7 +278,7 @@ class _agentEditListState extends State<EditAgentList> {
                                   Container(
                                     padding: EdgeInsets.fromLTRB(
                                         50.0, 30.0, 0.0, 0.0),
-                                    child: Text('Distributor Edit ',
+                                    child: Text('Customer Edit ',
                                         style: TextStyle(
                                             fontSize: 30.0,
                                             fontWeight: FontWeight.bold)),
@@ -269,7 +287,7 @@ class _agentEditListState extends State<EditAgentList> {
                               ),
                             ),
                             Container(
-                              height: MediaQuery.of(context).size.height + 200,
+                              height: MediaQuery.of(context).size.height,
                               child: FutureBuilder(
                                 future: _getAgent(),
                                 initialData: [],
@@ -292,8 +310,8 @@ class _agentEditListState extends State<EditAgentList> {
                                                 height: 200,
                                               )
                                             : ListView.separated(
-                                                physics:
-                                                    NeverScrollableScrollPhysics(),
+                                          shrinkWrap: true,
+                                          physics: ClampingScrollPhysics(),
                                                 scrollDirection: Axis.vertical,
                                                 itemCount:
                                                     snapshot.data!.length,

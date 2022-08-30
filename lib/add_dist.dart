@@ -7,13 +7,14 @@ import 'package:alkahir/model/distributor_list.dart';
 import 'package:background_locator/background_locator.dart';
 import 'package:background_locator/location_dto.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-
+import 'package:flutter/material.dart';
 import 'package:csc_picker/csc_picker.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
 
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -27,8 +28,6 @@ import 'listview.dart';
 import 'package:progress_dialog_null_safe/progress_dialog_null_safe.dart';
 
 import 'model/MapLocation.dart';
-import 'model/image_uploadmodel.dart';
-import 'plugins/functions.dart';
 
 class addDistributor extends StatefulWidget {
   final String id;
@@ -67,6 +66,8 @@ class Brands {
 }
 
 class _addDistributorState extends State<addDistributor> {
+
+
   ReceivePort port = ReceivePort();
   LocationDto? lastLocation;
   int imagecount = 0;
@@ -88,7 +89,7 @@ class _addDistributorState extends State<addDistributor> {
   late bool v3 = false;
   late bool v4 = false;
 
-  late int value_type=0;
+  late int value_type = 0;
   final TextEditingController _distributorCompaniesController =
       TextEditingController();
   final TextEditingController _distributorCardLimitController =
@@ -126,39 +127,28 @@ class _addDistributorState extends State<addDistributor> {
   final TextEditingController _distributorCoordinatesController =
       TextEditingController();
 
-
   bool _fieldValidator = false;
   String _errorMessage = '';
   String _errorFieldMessage = '';
   bool _emailValidator = true;
   bool _passwordValidator = true;
 
-
   int validateField(String val) {
-    if(val.isEmpty){
+    if (val.isEmpty) {
       setState(() {
         _errorFieldMessage = "";
         _fieldValidator = false;
-
-
       });
       return 0;
-
-    }
-    else
-    {    setState(() {
-      _errorFieldMessage = "";
-      _fieldValidator = true;
-
-
-    });
-    return 1;
-
+    } else {
+      setState(() {
+        _errorFieldMessage = "";
+        _fieldValidator = true;
+      });
+      return 1;
     }
     return 0;
   }
-
-
 
   Position? position;
   late ProgressDialog pr;
@@ -191,9 +181,18 @@ class _addDistributorState extends State<addDistributor> {
 
   Future<void> getValues() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-  //  loadData(latlng);
+    //  loadData(latlng);
+  }
 
-
+  int validateMobile(String value) {
+    String pattern = r'(^(?:[0-9]9)?[0-9]{10,12}$)';
+    RegExp regExp = new RegExp(pattern);
+    if (value.length == 0) {
+      return 0;
+    } else if (value.length == 10) {
+      return 1;
+    }
+    return 0;
   }
 
   //============================== Image from gallery
@@ -240,7 +239,7 @@ class _addDistributorState extends State<addDistributor> {
       id,
       bool workingCheck,
       // ignore: non_constant_identifier_names
-      bool ownedCheck ,
+      bool ownedCheck,
       List<XFile>? attachments,
       int value_type,
       String width,
@@ -283,72 +282,30 @@ class _addDistributorState extends State<addDistributor> {
       'added_by': id,
     };
 
-/*
+    File compressedFileOne = await FlutterNativeImage.compressImage(
+        attachments![0]!.path,
+        quality: 10,
+        percentage: 50);
 
-if(checkInternet == true) {
-  http.MultipartRequest request = http.MultipartRequest(
-      "POST",
-      Uri.parse(
-          "http://alkhair.hameedsweets.com/alkhair/public/api/v1/agent/distributor"));
+    final bytesFileOne = File(compressedFileOne.path).readAsBytesSync();
 
-  Map<String, String> headers = {"Content-Type": "application/json"};
+    File compressedFileTwo = await FlutterNativeImage.compressImage(
+        attachments![1]!.path,
+        quality: 10,
+        percentage: 50);
 
-  attachments!.forEach((element) async {
-    print(element);
+    File compressedFileThree = await FlutterNativeImage.compressImage(
+        attachments![2]!.path,
+        quality: 10,
+        percentage: 50);
 
-    if (element.path != "assets/noimage.png") {
-      request.files
-          .add(await http.MultipartFile.fromPath('avatar[]', element.path));
-    }
-  });
-
-  request.headers.addAll(headers);
-  request.fields.addAll(data);
-
-  pr.show();
-
-  http.StreamedResponse response = await request.send();
-  final respStr = await response.stream.bytesToString();
-
-  if (response.statusCode == 200) {
-    // success
-    if (pr.isShowing()) {
-      pr.hide();
-    }
-    final decodedMap = json.decode(respStr);
-
-    showAlertDialog(context, "Alert", decodedMap['message']);
-
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => BoardView()));
-  } else {
-    if (pr.isShowing()) {
-      pr.hide();
-    }
-
-    // error
-    showAlertDialog(context, "Alert", "Distributor Cannot be Added!");
-  }
-
-  return true;
-        }
-
-
-else
-  {
-
- */
-
-
-    final bytesFileOne = File(attachments![0].path).readAsBytesSync();
     String img64FileOne = base64Encode(bytesFileOne);
 
-    final bytesFileTwo = File(attachments![1].path).readAsBytesSync();
+    final bytesFileTwo = File(compressedFileTwo.path).readAsBytesSync();
     String img64FileTwo = base64Encode(bytesFileTwo);
 
-    final bytesFileThree = File(attachments![2].path).readAsBytesSync();
+    final bytesFileThree = File(compressedFileThree.path).readAsBytesSync();
     String img64FileThree = base64Encode(bytesFileThree);
-
 
     saveDataDistributor(
         value_type.toString(),
@@ -380,17 +337,15 @@ else
         width,
         depth);
 
-
 //loadDataDistributor();
+    Navigator.push(context, MaterialPageRoute(builder: (context) => BoardView()));
+//    showAlertDialog(context, "Alert", "Customer Added!", 1);
 
-   showAlertDialog(context, "Alert", "Distributor Added!",1);
-
-//    Navigator.push(context, MaterialPageRoute(builder: (context) => BoardView()));
+//
     return true;
   }
 
-
-  showAlertDialog(BuildContext context, String title, String desc,int x) {
+  showAlertDialog(BuildContext context, String title, String desc, int x) {
     // set up the button
     Widget okButton = TextButton(
       child: Text("OK",
@@ -401,21 +356,16 @@ else
             fontFamily: 'Raleway',
           )),
       onPressed: () {
+        if (Navigator.canPop(context) == true) {
+          Navigator.pop(context);
+          if (x == 1) {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => BoardView()));
+          }
 
-
-
-          if (Navigator.canPop(context) == true) {
-            Navigator.pop(context);
-if(x==1) {
-
-
-
-  Navigator.push(
-      context, MaterialPageRoute(builder: (context) => BoardView()));
-}
-
-          if(pr.isShowing())
-          { pr.hide();}
+          if (pr.isShowing()) {
+            pr.hide();
+          }
         }
       },
     );
@@ -454,11 +404,8 @@ if(x==1) {
       builder: (BuildContext context) {
         return alert;
       },
-
-
     );
   }
-
 
   ///  ===================== internet check ===================================
 
@@ -640,12 +587,8 @@ if(x==1) {
           child: SizedBox(
             height: 120,
             width: 80,
-
             child: Stack(
-
               children: <Widget>[
-
-
                 kIsWeb
                     ? Image.network(fileOne!.path, fit: BoxFit.fill)
                     : fileOne.runtimeType == XFile &&
@@ -689,15 +632,10 @@ if(x==1) {
                     },
                   ),
                 ),
-
-             
-
               ],
             ),
           ),
         ),
-
-
         SizedBox(
           width: 20,
         ),
@@ -751,7 +689,6 @@ if(x==1) {
                     },
                   ),
                 ),
-
               ],
             ),
           ),
@@ -807,9 +744,6 @@ if(x==1) {
                     },
                   ),
                 ),
-
-
-
               ],
             ),
           ),
@@ -1017,7 +951,6 @@ if(x==1) {
         builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
           return Scaffold(
               resizeToAvoidBottomInset: true,
-
               key: _scaffoldKey,
               drawer: NavBar(
                 status: widget.status,
@@ -1028,7 +961,6 @@ if(x==1) {
                 zone: widget.zone,
                 designation: widget.desgination,
               ),
-
               body: SingleChildScrollView(
                 physics: BouncingScrollPhysics(),
                 child: Column(
@@ -1078,22 +1010,20 @@ if(x==1) {
                             Column(children: <Widget>[
                               Row(
                                 children: const [
-                                  SizedBox(width: 40,),
-
+                                  SizedBox(
+                                    width: 40,
+                                  ),
                                   Text("Shop"),
-                                  SizedBox(width: 60,),
-
-
+                                  SizedBox(
+                                    width: 60,
+                                  ),
                                   Text("Visiting Card"),
-                                  SizedBox(width: 40,),
-
+                                  SizedBox(
+                                    width: 40,
+                                  ),
                                   Text("Person"),
-
                                 ],
-                              )
-
-,
-
+                              ),
                               Container(
                                 padding: const EdgeInsets.all(7.0),
                                 decoration: BoxDecoration(
@@ -1167,15 +1097,13 @@ if(x==1) {
                             ]),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text(_errorMessage + "\n"+_errorFieldMessage,  style: TextStyle(
-                                  fontSize: 15.0,
-                              color: Colors.black,
-
-                                  fontWeight: FontWeight.w400,
-                                  fontFamily: "Multi"),
-
-
-
+                              child: Text(
+                                _errorMessage + "\n" + _errorFieldMessage,
+                                style: TextStyle(
+                                    fontSize: 15.0,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: "Multi"),
                               ),
                             ),
 
@@ -1186,7 +1114,7 @@ if(x==1) {
                             TextField(
                               controller: _distributorNameController,
                               decoration: const InputDecoration(
-                                  labelText: 'Distributor Name *',
+                                  labelText: 'Customer Name *',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1196,13 +1124,9 @@ if(x==1) {
                                       borderSide: BorderSide(
                                           color:
                                               Color.fromRGBO(55, 75, 167, 1)))),
-                              onChanged: (value)
-                              {
-
-                                validateField(value);
+                              onChanged: (value) {
 
                               },
-
                             ),
                             SizedBox(height: 20.0),
                             TextField(
@@ -1259,13 +1183,9 @@ if(x==1) {
                                           color:
                                               Color.fromRGBO(55, 75, 167, 1)))),
                               keyboardType: TextInputType.number,
-                              onChanged: (value)
-                              {
-
-                                validateField(value);
+                              onChanged: (value) {
 
                               },
-
                             ),
                             SizedBox(height: 20.0),
                             TextField(
@@ -1273,6 +1193,8 @@ if(x==1) {
                                 FilteringTextInputFormatter.digitsOnly,
                                 new LengthLimitingTextInputFormatter(10),
                               ],
+                              maxLength: 10,
+                              maxLengthEnforcement: MaxLengthEnforcement.enforced,
                               controller: _distributorContactTController,
                               decoration: const InputDecoration(
                                   prefixText: '+92 ',
@@ -1302,13 +1224,9 @@ if(x==1) {
                                       borderSide: BorderSide(
                                           color:
                                               Color.fromRGBO(55, 75, 167, 1)))),
-                              onChanged: (value)
-                              {
-
-                                validateField(value);
+                              onChanged: (value) {
 
                               },
-
                             ),
                             SizedBox(height: 20.0),
 
@@ -1342,8 +1260,6 @@ if(x==1) {
 
                                 onChanged: (value) => setState(() {
                                   _value = value!;
-
-
                                 }),
                               ),
                             ),
@@ -1361,14 +1277,9 @@ if(x==1) {
                                       borderSide: BorderSide(
                                           color:
                                               Color.fromRGBO(55, 75, 167, 1)))),
-                              onChanged: (value)
-                              {
-
-                                validateField(value);
+                              onChanged: (value) {
 
                               },
-
-
                             ),
                             SizedBox(height: 20.0),
 
@@ -1378,7 +1289,7 @@ if(x==1) {
                                   enabledBorder: UnderlineInputBorder(
                                     borderSide: BorderSide(color: Colors.white),
                                   ),
-                                  labelText: 'Distributor Type *',
+                                  labelText: 'Customer Type *',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Raleway',
                                       fontWeight: FontWeight.normal,
@@ -1392,12 +1303,11 @@ if(x==1) {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: Text(value),
-
                                 );
                               }).toList(),
                               onChanged: (value) {
                                 value_type = types_dist.indexOf(value!);
-                                validateField(value);
+
                                 // print(value_type);
                               },
                             ),
@@ -1423,10 +1333,6 @@ if(x==1) {
                                   onChanged: (bool? value) {
                                     setState(() {
                                       workingCheck = true;
-
-
-
-
 
                                       v2 = false;
                                       v1 = true;
@@ -1510,7 +1416,6 @@ if(x==1) {
                                     setState(() {
                                       ownedCheck = true;
 
-
                                       v3 = true;
                                       v4 = false;
                                     });
@@ -1522,11 +1427,6 @@ if(x==1) {
                                   onChanged: (bool? value) {
                                     setState(() {
                                       ownedCheck = false;
-
-
-
-
-
 
                                       v3 = false;
                                       v4 = true;
@@ -1593,13 +1493,9 @@ if(x==1) {
                                             borderSide: BorderSide(
                                                 color: Color.fromRGBO(
                                                     55, 75, 167, 1)))),
-                                    onChanged: (value)
-                                    {
-
-                                      validateField(value);
+                                    onChanged: (value) {
 
                                     },
-
                                     keyboardType: TextInputType.number,
                                   ),
                                 ),
@@ -1622,10 +1518,7 @@ if(x==1) {
                                             borderSide: BorderSide(
                                                 color: Color.fromRGBO(
                                                     55, 75, 167, 1)))),
-                                    onChanged: (value)
-                                    {
-
-                                      validateField(value);
+                                    onChanged: (value) {
 
                                     },
                                     keyboardType: TextInputType.number,
@@ -1652,13 +1545,9 @@ if(x==1) {
                                       borderSide: BorderSide(
                                           color:
                                               Color.fromRGBO(55, 75, 167, 1)))),
-                              onChanged: (value)
-                              {
-
-                                validateField(value);
+                              onChanged: (value) {
 
                               },
-
                               keyboardType: TextInputType.number,
                             ),
                             SizedBox(height: 20.0),
@@ -1716,13 +1605,9 @@ if(x==1) {
                                       borderSide: BorderSide(
                                           color:
                                               Color.fromRGBO(55, 75, 167, 1)))),
-                              onChanged: (value)
-                              {
-
-                                validateField(value);
+                              onChanged: (value) {
 
                               },
-
                               keyboardType: TextInputType.number,
                             ),
 
@@ -1762,6 +1647,13 @@ if(x==1) {
                                       borderSide: BorderSide(
                                           color:
                                               Color.fromRGBO(55, 75, 167, 1)))),
+
+                              onChanged: (value) {
+
+                              },
+
+
+
                             ),
 
                             const SizedBox(height: 20.0),
@@ -1780,8 +1672,6 @@ if(x==1) {
                                         borderSide: BorderSide(
                                             color: Color.fromRGBO(
                                                 55, 75, 167, 1)))),
-
-
                               ),
                             ),
                             SizedBox(height: 20.0),
@@ -1794,39 +1684,78 @@ if(x==1) {
                                 shadowColor: Colors.blueAccent,
                                 color: Color.fromRGBO(55, 75, 167, 1),
                                 elevation: 7.0,
-                                child: InkWell(
+                                child: GestureDetector(
                                   onTap: () {
                                     int x = 1;
-                                  x =  x * validateField(_distributorShopSizeController.text);
-                                    x = x * validateField(_distributorShopNameController.text);
+                                    x = x *
+                                        validateField(
+                                            _distributorShopSizeController
+                                                .text);
+                                    x = x *
+                                        validateField(
+                                            _distributorShopNameController
+                                                .text);
 
-                                    x = x * validateField(_distributorSaleController.text);
+                                    x = x *
+                                        validateField(
+                                            _distributorSaleController.text);
 
-                                    x = x *  validateField(_distributorNameController.text);
+                                    x = x *
+                                        validateField(
+                                            _distributorNameController.text);
 
-                                    x = x *     validateField(_distributorShopNameController.text);
+                                    x = x *
+                                        validateField(
+                                            _distributorShopNameController
+                                                .text);
 
-                                    x = x *      validateField(_distributorContactNumController.text);
-                                    x = x *     validateField(_distributorAddressController.text,);
-                                    x = x *      validateField(  _distributorUSaleController.text      );
-                                    x = x *    validateField(  _distributorFloorController.text      );
-                                    x = x *     validateField(  _distributorTotalSaleController.text      );
-                                    x = x *   validateField(  _distributorCardLimitController.text      );
-                                    x = x *   validateField(  _distributorShopSizeControllerw.text      );
+                                    x = x *
+                                        validateField(
+                                            _distributorContactNumController
+                                                .text);
+                                    x = x *
+                                        validateField(
+                                          _distributorAddressController.text,
+                                        );
+                                    x = x *
+                                        validateField(
+                                            _distributorUSaleController.text);
+                                    x = x *
+                                        validateField(
+                                            _distributorFloorController.text);
+                                    x = x *
+                                        validateField(
+                                            _distributorTotalSaleController
+                                                .text);
+                                    x = x *
+                                        validateField(
+                                            _distributorCardLimitController
+                                                .text);
+                                    x = x *
+                                        validateField(
+                                            _distributorShopSizeControllerw
+                                                .text);
+
+                                    x = x *
+                                        validateMobile(
+                                            _distributorContactNumController
+                                                .text);
+
+
+                                    x = x *
+                                        validateField(
+                                            _distributorCompaniesController
+                                                .text);
 
 
 
-                                    if(x==0)
-
-                                    {
-
-                                      showAlertDialog(context, "Alert", "Field Missing",x);
-                                      return ;
-
-
-                                    }
-else {
-                                      List dataList = CitiesJson["data"]["list"];
+                                    if (x == 0) {
+                                      showAlertDialog(
+                                          context, "Alert", "Field Missing", x);
+                                      return;
+                                    } else {
+                                      List dataList =
+                                          CitiesJson["data"]["list"];
                                       var valueSizeShop =
                                           _distributorShopSizeController.text +
                                               "," +
@@ -1834,16 +1763,16 @@ else {
                                                   .text;
 
                                       try {
-                                        _imageFileList![0] =
-                                        (fileOne?.path != "assets/noimage.png"
+                                        _imageFileList![0] = (fileOne?.path !=
+                                                "assets/noimage.png"
                                             ? fileOne
                                             : XFile("abdef"))!;
-                                        _imageFileList![1] =
-                                        (fileTwo?.path != "assets/noimage.png"
+                                        _imageFileList![1] = (fileTwo?.path !=
+                                                "assets/noimage.png"
                                             ? fileTwo
                                             : XFile("abc"))!;
-                                        _imageFileList![2] =
-                                        (fileThree?.path != "assets/noimage.png"
+                                        _imageFileList![2] = (fileThree?.path !=
+                                                "assets/noimage.png"
                                             ? fileThree
                                             : XFile("abcef"))!;
 
@@ -1851,72 +1780,83 @@ else {
                                           _value_brand +=
                                               element.name.toString() + ",";
                                         });
-                                      }
-                                      catch (e) {
-                                        showAlertDialog(
-                                            context, "Alert", "Image not found",
-                                            0);
+                                      } catch (e) {
+                                        showAlertDialog(context, "Alert",
+                                            "Image not found", 0);
                                         return;
                                       }
 
-                                      if (fileThree?.path != "assets/noimage.png"  && fileTwo?.path != "assets/noimage.png"  && fileOne?.path !="assets/noimage.png") {
+                                      if (fileThree?.path !=
+                                              "assets/noimage.png" &&
+                                          fileTwo?.path !=
+                                              "assets/noimage.png" &&
+                                          fileOne?.path !=
+                                              "assets/noimage.png") {
                                         submit(
-                                            _distributorNameController.text,
-                                            _distributorShopNameController.text,
-                                            _distributorEmailController.text,
-                                            _distributorCNICController.text,
-                                            _distributorContactNumController
-                                                .text,
-                                            _distributorAddressController.text,
-                                            _value,
-                                            _distributorCoordinatesController
-                                                .text,
-                                            _distributorCompaniesController
-                                                .text,
-                                            _distributorCardLimitController
-                                                .text,
-                                            _distributorTotalSaleController
-                                                .text,
-                                            _distributorUSaleController.text,
-                                            valueSizeShop.toString(),
-                                            _distributorFloorController.text,
-                                            _distributorSaleController.text,
-                                            _distributorContactTController.text,
-                                            _value_brand,
-                                            widget.id,
-                                            workingCheck,
-                                            ownedCheck,
-                                            _imageFileList,
-                                            value_type,
-                                            _distributorShopSizeController.text,
-                                            _distributorShopSizeControllerw
-                                                .text)
+                                                _distributorNameController.text,
+                                                _distributorShopNameController
+                                                    .text,
+                                                _distributorEmailController
+                                                    .text,
+                                                _distributorCNICController.text,
+                                                _distributorContactNumController
+                                                    .text,
+                                                _distributorAddressController
+                                                    .text,
+                                                _value,
+                                                _distributorCoordinatesController
+                                                    .text,
+                                                _distributorCompaniesController
+                                                    .text,
+                                                _distributorCardLimitController
+                                                    .text,
+                                                _distributorTotalSaleController
+                                                    .text,
+                                                _distributorUSaleController
+                                                    .text,
+                                                valueSizeShop.toString(),
+                                                _distributorFloorController
+                                                    .text,
+                                                _distributorSaleController.text,
+                                                _distributorContactTController
+                                                    .text,
+                                                _value_brand,
+                                                widget.id,
+                                                workingCheck,
+                                                ownedCheck,
+                                                _imageFileList,
+                                                value_type,
+                                                _distributorShopSizeController
+                                                    .text,
+                                                _distributorShopSizeControllerw
+                                                    .text)
                                             .then((value) {
                                           setState(() {
                                             saveAdress = value;
                                             _selectedBrands = [];
                                             _value_brand = "";
+
+
                                           });
                                         });
                                         _selectedBrands = [];
+                                      } else {
+                                        showAlertDialog(context, "Alert",
+                                            "Image Missing", 0);
                                       }
-                                      else
-                                        {
-                                          showAlertDialog(context, "Alert", "Image Missing", 0);
-                                        }
                                     }
-
                                   },
                                   child: const Center(
-                                    child:InkWell(
-                                    child: Text(
-                                      'Submit',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.normal,
-                                          fontFamily: 'Raleway'),
+                                    child: InkWell(
+                                      child: Text(
+                                        'Submit',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.normal,
+                                            fontFamily: 'Raleway'),
+                                      ),
                                     ),
-                                  ),),
+                                  ),
                                 ),
                               ),
                             ),

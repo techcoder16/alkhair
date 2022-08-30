@@ -931,13 +931,13 @@ Map CitiesJson = {
       },
       {
         "country": "PK",
-        "name": "Islamabad",
+        "name": "_Islamabad",
         "lat": "33.72148",
         "lng": "73.04329"
       },
       {
         "country": "PK",
-        "name": "Islamkot",
+        "name": "_Islamkot",
         "lat": "24.69904",
         "lng": "70.17982"
       },

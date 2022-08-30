@@ -5,6 +5,8 @@ import 'dart:convert';
 import 'dart:core';
 import 'dart:isolate';
 import 'dart:typed_data';
+import 'package:alkahir/plugins/edit_dist.dart';
+import 'package:alkahir/view_activity.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:alkahir/plugins/global.dart';
@@ -36,6 +38,7 @@ import 'package:background_locator/location_dto.dart';
 import 'package:background_locator/settings/android_settings.dart';
 import 'package:background_locator/settings/ios_settings.dart' as ios_settings;
 
+import 'add_activity.dart';
 import 'assets/globals.dart';
 import 'login.dart';
 import 'model/checkout_model.dart';
@@ -80,6 +83,7 @@ class _BoardViewScreenState extends State<BoardView>
   String CheckOutTime = "";
   var start_day = "";
   var end_day = "";
+double getEditOpacity = 0.0;
 
   String zone = "";
   String designation = "";
@@ -106,7 +110,7 @@ class _BoardViewScreenState extends State<BoardView>
   double checkOutOpacity = 0.3;
   double startDayOp = 1;
   double endDayOp = 1;
-
+String endDay= "";
   final TextEditingController _RemarksController = TextEditingController();
   String check_time = "";
   late ProgressDialog pr;
@@ -167,18 +171,65 @@ class _BoardViewScreenState extends State<BoardView>
 
   ///================================== see location data ===========
 
-  ///================================== get values from shared preferences ====
-  Future<void> getValues() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-
-
+  Future<void > getStartDay()
+  async{
     var jsonResponse = null;
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    id = await preferences.getString("id").toString();
+    id = await prefs.getString("id").toString();
 
     Map data = {'agn_code': id};
 
 
+    try {
+
+      var response = await http.post(
+          Uri.parse(
+              base_Url + "alkhair/public/api/v1/agent/last-checkin-checkout"),
+          body: data);
+      if (response.statusCode == 200) {
+
+        jsonResponse = json.decode(response.body);
+        print(jsonResponse["message"]['started_at']);
+        start_day = jsonResponse["message"]['started_at'];
+        endDay = jsonResponse["message"]['ended_at'];
+        print(start_day);
+
+print("start day");
+        start_day ??= "";
+
+        endDay ??= "";
+
+
+
+
+      }
+
+
+
+    }
+    catch(e)
+    {
+      print(e);
+
+    }
+
+
+  }
+  ///================================== get values from shared preferences ====
+  Future<void> getValues() async {
+
+await getDropDownCustomer();
+
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+
+    var jsonResponse = null;
+
+    id = await preferences.getString("id").toString();
+
+    Map data = {'agn_code': id};
+
+ await getStartDay();
 
 
 try {
@@ -223,15 +274,7 @@ catch(e)
     String formattedTime = DateFormat.Hms().format(now);
     print(formattedTime);
 
-    if (formattedTime.compareTo("00:00:00") == 0) {
-      newDate = await preferences.getString("checkOutTime")!;
-      print(newDate);
 
-      String xyz = await preferences.getString("time")!;
-      await preferences.setString("SessionDay", xyz);
-
-      await preferences.setString("checkOutTime", "")!;
-    } else {}
     zone = await preferences.getString("zone")!;
     designation = await preferences.getString("designation")!;
     email = await preferences.getString("email").toString();
@@ -247,9 +290,14 @@ catch(e)
     } catch (e) {
       print(e);
     }
+
+
     try {
-      start_day = await preferences.getString("startDay")!;
+      endDay = await preferences.getString("SessionDay")!;
     } catch (e) {}
+
+
+
     try {
       checkinOp = await preferences.getDouble("Opacity")!;
     } catch (e) {}
@@ -271,6 +319,12 @@ catch(e)
       shouldDisplay = await preferences.getBool("ShouldDisplay")!;
     } catch (e) {}
 
+    try {
+      getEditOpacity = await preferences.getDouble("EditCustomer")!;
+    } catch (e) {}
+
+
+
     currentlattitude = await preferences.getDouble("LocationLattitude")!;
     currentlongitude = await preferences.getDouble("LocationLongitude")!;
 
@@ -291,7 +345,39 @@ catch(e)
         _onStart();
       }
     }
+
   }
+
+  Future<void> getDropDownCustomer() async {
+
+
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    try {
+     var  idNav = await preferences.getString("id")!;
+
+      var jsonResponse = null;
+
+      var response = await http.get(
+        Uri.parse(
+            base_Url + "alkhair/public/api/v1/agent/dashboard/" + idNav),
+      );
+print(response.body);
+      if (response.statusCode == 200) {
+        jsonResponse = json.decode(response.body);
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.setDouble("EditCustomer", double.parse(jsonResponse['message']["customer_edit_perm"].toString())) ;
+
+
+
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+
 
   ///================================== get values from shared preferences =====
 
@@ -545,7 +631,7 @@ catch(e)
                             children: [
                               FutureBuilder(
                                 future: Future.wait(
-                                    [_getUserLocation(), getValues()]),
+                                    [_getUserLocation(), getValues(),getStartDay()]),
                                 builder: (BuildContext context,
                                     AsyncSnapshot<dynamic> snapshot) {
                                   return SingleChildScrollView(
@@ -689,36 +775,8 @@ catch(e)
         bigMsg: "");
   }
 
-  Future<bool> _determinePosition() async {
-    if (isRunning == true) {
-      _onStart();
-    }
-    bool? serviceEnabled = false;
-    LocationPermission permission;
 
-    // Test if location services are enabled.
-    try {
-      serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    } catch (e) {}
 
-    if (!serviceEnabled!) {
-      return false;
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return false;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      return false;
-    }
-
-    return true;
-  }
 
   Future<void> _startLocator() async {
     Map<String, dynamic> data = {'countInit': 1};
@@ -767,6 +825,7 @@ catch(e)
 
   @override
   void initState() {
+
     initConnectivity();
 
     _addMarker(LatLng(currentPostion.latitude, currentlongitude), "origin",
@@ -834,7 +893,75 @@ catch(e)
           color: Colors.grey),
     );
 
+
     super.initState();
+  }
+
+  Future<bool> onBackPress(context) async {
+   showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Do you wish to exit?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () => {Navigator.pop(context, false)},
+            ),
+            TextButton(
+                onPressed: () {
+
+      while(Navigator.canPop(context))
+      {
+        Navigator.pop(context,true);
+      }
+    },
+                child: Text('Exit'))
+          ],
+        ));
+    return false;
+
+  }
+
+  Future<bool> _onWillPop(BuildContext context) async {
+    bool? exitResult = await showDialog(
+      context: context,
+      builder: (context) => _buildExitDialog(context),
+    );
+    return exitResult ?? false;
+  }
+
+
+  Future<bool?> _showExitDialog(BuildContext context) async {
+    return await showDialog(
+      context: context,
+      builder: (context) => _buildExitDialog(context),
+    );
+  }
+
+
+  AlertDialog _buildExitDialog(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Please confirm'),
+      content: const Text('Do you want to exit the app?'),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(false),
+          child: Text('No'),
+        ),
+        TextButton(
+          onPressed: () {
+            while(Navigator.canPop(context)==true) {
+              Navigator.of(context).pop(true);
+              Navigator.of(context).pop(true);
+              Navigator.of(context).pop(true);
+            }
+
+          },
+
+          child: Text('Yes'),
+        ),
+      ],
+    );
   }
 
   @override
@@ -844,26 +971,22 @@ catch(e)
     ///============================================= loading dialoge ================================================
 
     return WillPopScope(
-      onWillPop: () async {
-        while (Navigator.canPop(context)) {
-          Navigator.of(context).pop(false);
-        }
-        ;
+      onWillPop: ()async => false,
 
-        return false;
-      },
       child: FutureBuilder(
         future: Future.wait([getValues(), CheckPermissionClosed()]),
         builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+
           return Scaffold(
             drawer: NavBar(
               status: checkTapcount,
-              id: this.id,
+              id: id,
               email: this.email,
               name: this.name,
               latlng: latlng,
               zone: this.zone,
               designation: this.designation,
+
             ),
             resizeToAvoidBottomInset: false,
             body: SingleChildScrollView(
@@ -984,7 +1107,7 @@ catch(e)
                         children: <Widget>[
                           SizedBox(height: 10.0),
                           Image.asset(
-                            'assets/Picture2.png',
+                            'assets/checkin.png',
                             height: 45,
                             width: 45,
                             fit: BoxFit.cover,
@@ -1018,7 +1141,207 @@ catch(e)
                       ],
                     ),
                   ),
-                  Container(
+
+
+                      Container(
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.fromLTRB(260, 600, 10, 0),
+                        height: 100,
+                        width: 100,
+                        child: InkWell(
+                          overlayColor: MaterialStateProperty.all(Colors.white),
+                          hoverColor: Colors.white,
+                          highlightColor: Colors.white,
+                          onTap: () async {
+
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ViewActivity(
+                                      id: id,
+
+                                    )));
+
+
+
+                          },
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(height: 10.0),
+                              Image.asset(
+                                'assets/ViewActivity.png',
+                                height: 45,
+                                width: 45,
+                                fit: BoxFit.cover,
+                                alignment: Alignment.center,
+                              ),
+                              SizedBox(height: 10.0),
+                              Text(
+                                "View Activity",
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Color.fromRGBO(247, 248, 250, 1),
+                          //  borderRadius: BorderRadius.circular(30), //border corner radius
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5), //color of shadow
+                              spreadRadius: 5, //spread radius
+                              blurRadius: 7, // blur radius
+                              offset: Offset(0, 2), // changes position of shadow
+                              //first paramerter of offset is left-right
+                              //second parameter is top to down
+                            ),
+                            //you can set more BoxShadow() here
+                          ],
+                        ),
+                      ),
+
+
+
+
+
+
+                      Container(
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.fromLTRB(140, 600, 10, 0),
+                        height: 100,
+                        width: 100,
+                        child: InkWell(
+                          overlayColor: MaterialStateProperty.all(Colors.white),
+                          hoverColor: Colors.white,
+                          highlightColor: Colors.white,
+                          onTap: () async {
+
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AddActivity(
+                                      id: id,
+
+                                    )));
+
+
+
+                          },
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(height: 10.0),
+                              Image.asset(
+                                'assets/AddActivity.png',
+                                height: 45,
+                                width: 45,
+                                fit: BoxFit.cover,
+                                alignment: Alignment.center,
+                              ),
+                              SizedBox(height: 10.0),
+                              Text(
+                                "Add Activity",
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Color.fromRGBO(247, 248, 250, 1),
+                          //  borderRadius: BorderRadius.circular(30), //border corner radius
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5), //color of shadow
+                              spreadRadius: 5, //spread radius
+                              blurRadius: 7, // blur radius
+                              offset: Offset(0, 2), // changes position of shadow
+                              //first paramerter of offset is left-right
+                              //second parameter is top to down
+                            ),
+                            //you can set more BoxShadow() here
+                          ],
+                        ),
+                      ),
+
+
+
+                      Container(
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.fromLTRB(20, 600, 10, 0),
+                        height: 100,
+                        width: 100,
+                        child: InkWell(
+                          overlayColor: MaterialStateProperty.all(Colors.white),
+                          hoverColor: Colors.white,
+                          highlightColor: Colors.white,
+                          onTap: () async {
+if(getEditOpacity == 1) {
+  Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) =>
+              EditAgentList(
+                id: id,
+                email: email,
+                name: name,
+                status: checkTapcount,
+                lanlat: currentPostion,
+                zone: this.designation,
+                desgination: this.designation,
+              )));
+}
+
+                          },
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(height: 10.0),
+                              Image.asset(
+                                'assets/edit.png',
+                                height: 45,
+                                width: 45,
+                                fit: BoxFit.cover,
+                                alignment: Alignment.center,
+                              ),
+                              SizedBox(height: 10.0),
+                              Text(
+                                "Edit",
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Color.fromRGBO(247, 248, 250, getEditOpacity == 0 ?0.3 :1),
+                          //  borderRadius: BorderRadius.circular(30), //border corner radius
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5), //color of shadow
+                              spreadRadius: 5, //spread radius
+                              blurRadius: 7, // blur radius
+                              offset: Offset(0, 2), // changes position of shadow
+                              //first paramerter of offset is left-right
+                              //second parameter is top to down
+                            ),
+                            //you can set more BoxShadow() here
+                          ],
+                        ),
+                      ),
+
+
+
+
+                      Container(
                     alignment: Alignment.center,
                     margin: EdgeInsets.fromLTRB(140, 450, 10, 0),
                     height: 100,
@@ -1082,7 +1405,7 @@ catch(e)
                         children: <Widget>[
                           SizedBox(height: 10.0),
                           Image.asset(
-                            'assets/Picture1.png',
+                            'assets/checkout.png',
                             height: 45,
                             width: 45,
                             fit: BoxFit.cover,
@@ -1147,7 +1470,7 @@ catch(e)
                         children: <Widget>[
                           SizedBox(height: 10.0),
                           Image.asset(
-                            'assets/images.png',
+                            'assets/customers.png',
                             height: 40,
                             width: 40,
                             fit: BoxFit.cover,
@@ -1155,7 +1478,7 @@ catch(e)
                           ),
                           SizedBox(height: 10.0),
                           const Text(
-                            'Distributor',
+                            'Customer',
                             style: TextStyle(
                               fontSize: 13,
                               color: Colors.grey,
@@ -1218,8 +1541,12 @@ catch(e)
                                           backgroundColor: Colors.white,
                                           child: CircleAvatar(
                                             radius: 70,
+
                                             backgroundColor: Colors.white,
-                                            backgroundImage: NetworkImage(
+                                            backgroundImage:
+                                            NetworkImage(
+
+
                                                 imageLogin == null
                                                     ? "https://scontent.flhe5-1.fna.fbcdn.net/v/t31.18172-8/18620768_1416977505022615_5165035795391275854_o.jpg?_nc_cat=106&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=_QAHLR2HecQAX-2PQzh&_nc_ht=scontent.flhe5-1.fna&oh=00_AT9OBOte3iMqXf79hbzW2LlQRWs2AIIzWkbVWcAOaFfIXg&oe=62BD65B0"
                                                     : imageLogin),
@@ -1291,7 +1618,7 @@ catch(e)
                                           "End Day: " +
                                               "\n" +
                                               "\n" +
-                                              _splitString(checkoutDate),
+                                              _splitString(endDay),
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.normal,
@@ -1338,6 +1665,8 @@ catch(e)
                     ),
                   ),
                 ),
+
+
                 Positioned(
                   // To take AppBar Size only
                   top: 35.0,

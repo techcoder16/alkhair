@@ -9,7 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 
-
 import 'package:progress_dialog_null_safe/progress_dialog_null_safe.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -92,16 +91,12 @@ class _syncCheckOutState extends State<SyncCheckOut> {
     return _updateConnectionStatus(result);
   }
 
-
-  void initState()
-  {
-
-    initConnectivity();;
+  void initState() {
+    initConnectivity();
+    ;
   }
+
   Future<bool> submitCheckOut() async {
-
-
-
     await initConnectivity();
     if (finaldist.isNotEmpty && checkInternet == true) {
       finaldist.forEach((element) async {
@@ -111,67 +106,46 @@ class _syncCheckOutState extends State<SyncCheckOut> {
 
         Map<String, String> d1 = {
           'agn_code': element.agn_code,
-         // "start_coordinates": element.start_coordinates,
-     //     'date': element.date,
+          // "start_coordinates": element.start_coordinates,
+          //     'date': element.date,
           'started_at': element.started_at,
           'distance': element.distance,
-       //   'remarks': element.remarks,
+          //   'remarks': element.remarks,
           'ended_at': element.ended_at,
-       //   'end_coordinates': element.end_coordinates,
+          //   'end_coordinates': element.end_coordinates,
           'coor': element.end_coordinates
         };
 
         try {
-
-
-
           var response = await http.post(
-              Uri.parse(
-                  base_Url + "alkhair/public/api/v1/agent/trips"),
+              Uri.parse(base_Url + "alkhair/public/api/v1/agent/trips"),
               body: d1);
 
-          print(response.statusCode );
+          print(response.statusCode);
 
-          if (response.statusCode == 200) {
-
-
-          }
-        } catch (e) {
-
-
-        }
+          if (response.statusCode == 200) {}
+        } catch (e) {}
       });
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
       initConnectivity();
-      if(checkInternet ==true) {
-
+      if (checkInternet == true) {
         prefs.remove("dist_key_checkout");
-      }
-
-      else if(checkInternet ==false)
-      {
-
+      } else if (checkInternet == false) {
         showAlertDialog(context, "Alert", "Failed to Sync:No connectivity");
-
-      }
-      else
-      {
-
+      } else {
         showAlertDialog(context, "Alert", "Sync Failed!");
-
       }
-
-
 
       showAlertDialog(context, "Alert", "Data Sync");
-      if(pr.isShowing()){pr.hide();}
-
+      if (pr.isShowing()) {
+        pr.hide();
+      }
 
       return true;
     } else {
-     showAlertDialog(context, "Alert", "Failed Sync No Internet!");
+      showAlertDialog(context, "Alert", "Failed Sync No Internet!");
     }
 
     return false;
@@ -186,15 +160,10 @@ class _syncCheckOutState extends State<SyncCheckOut> {
   Future<List<CheckOut>> _getCheckOut() async {
     List<CheckOut> checkoutList = [];
 
-
-
     try {
       checkoutList = await loadDataCheckOut();
-    } catch (e) {
-
-    }
+    } catch (e) {}
     finaldist = checkoutList;
-
 
     if (pr.isShowing()) {
       pr.hide();
@@ -216,41 +185,31 @@ class _syncCheckOutState extends State<SyncCheckOut> {
     }
   }
 
-
   Future<bool> submitDist() async {
-    int k =0;
+    int k = 0;
     initConnectivity();
 
-
-    if(finalcheck.isNotEmpty )
-    {
+    if (finalcheck.isNotEmpty) {
       finalcheck.forEach((element) async {
-
         var dataDist = element as Dist;
 
         var data = dataDist.toJson();
 
-        http.MultipartRequest request = http.MultipartRequest(
-            "POST",
-            Uri.parse(
-                base_Url + "alkhair/public/api/v1/agent/distributor"));
-
+        http.MultipartRequest request = http.MultipartRequest("POST",
+            Uri.parse(base_Url + "alkhair/public/api/v1/agent/distributor"));
 
         Map<String, String> headers = {"Content-Type": "application/json"};
 
+        request.files.add(await http.MultipartFile.fromBytes(
+            'avatar[]', dataFromBase64String(element.fileOne),
+            filename: "image"));
+        request.files.add(await http.MultipartFile.fromBytes(
+            'avatar[]', dataFromBase64String(element.fileTwo),
+            filename: "image_2"));
 
-
-
-        request.files
-            .add(await http.MultipartFile.fromBytes(
-            'avatar[]', dataFromBase64String(element.fileOne),filename: "image"));
-        request.files
-            .add(await http.MultipartFile.fromBytes(
-            'avatar[]', dataFromBase64String(element.fileTwo),filename: "image_2"));
-
-        request.files
-            .add(await http.MultipartFile.fromBytes(
-            'avatar[]', dataFromBase64String(element.fileThree),filename: "image_3"));
+        request.files.add(await http.MultipartFile.fromBytes(
+            'avatar[]', dataFromBase64String(element.fileThree),
+            filename: "image_3"));
         element.working_with_us == null ? "" : element.working_with_us;
 
         Map<String, String> d1 = {
@@ -263,16 +222,18 @@ class _syncCheckOutState extends State<SyncCheckOut> {
           'city': element.city,
           'coordinates': element.coordinates.toString(),
           'added_by': element.added_by.toString(),
-          'width' :element.width,
-          'depth':element.depth,
-
+          'width': element.width,
+          'depth': element.depth,
           'floor': element.floor,
           'owned': element.owned,
           'covered_sale': element.covered_sale,
           'uncovered_sale': element.uncovered_sale,
           'total_sale': element.total_sale,
-          'credit_limit': element.credit_limit == null ? "0" : element.credit_limit,
-          'companies_working_with': element.companies_working_with == null ? "" : element.companies_working_with,
+          'credit_limit':
+              element.credit_limit == null ? "0" : element.credit_limit,
+          'companies_working_with': element.companies_working_with == null
+              ? ""
+              : element.companies_working_with,
           'working_with_us': element.working_with_us ?? "",
           "our_brands": element.our_brands,
           'contact_no_1': element.contact_no_1,
@@ -280,127 +241,63 @@ class _syncCheckOutState extends State<SyncCheckOut> {
           'password': element.password,
           "password_confirmation": element.password_confirmation,
           'added_by': element.added_by,
-
         };
-
-
-
-
 
         request.headers.addAll(headers);
         request.fields.addAll(d1);
 
         //  pr.show();
 
-
-
-
         http.StreamedResponse response = await request.send();
 
-
         try {
-
-
-
-
           final respStr = await response.stream.bytesToString();
 
           if (response.statusCode == 200) {
             // success
 
-
             k++;
 
-
-        //   showAlertDialog(context, "Alert", response.reasonPhrase.toString());
-
-
-
+            //   showAlertDialog(context, "Alert", response.reasonPhrase.toString());
 
             final decodedMap = json.decode(respStr);
 
-
-            valueForSync = decodedMap["error"] == "true"?true :false;
-            msgForSync = decodedMap['message'] ;
-
-
-
-
+            valueForSync = decodedMap["error"] == "true" ? true : false;
+            msgForSync = decodedMap['message'];
           }
-
-
-        }
-        catch (e) {
-
-
-
-
-        }
-
-
+        } catch (e) {}
       });
-      if(pr.isShowing())
-      {
+      if (pr.isShowing()) {
         pr.hide();
       }
-
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       initConnectivity();
       print(checkInternet);
 
-      if(checkInternet ==true) {
+      if (checkInternet == true) {
+        if (valueForSync == false) {
+          prefs.remove("dist_key");
+          if (msgForSync == "") {
+            msgForSync = "Data Sync";
+          }
+          showAlertDialog(context, "Alert", msgForSync);
+        } else {
+          if (msgForSync == "") {
+            msgForSync = "Data Sync";
+          }
 
-if(valueForSync ==false) {
-   prefs.remove("dist_key");
-   if(msgForSync =="")
-     {
-       msgForSync ="Data Sync";
-
-
-     }
-   showAlertDialog(context, "Alert", msgForSync);
-
-}
-
-else {
-  if(msgForSync =="")
-  {
-    msgForSync ="Data Sync";
-
-
-  }
-
-  showAlertDialog(context, "Alert", msgForSync);
-}
-
-
-
-
-
-
-      }
-      else if(checkInternet == false)
-        {
-
-
-          showAlertDialog(context, "Alert", "Failed to Sync:No connectivity");
-
+          showAlertDialog(context, "Alert", msgForSync);
         }
-else
-  {
+      } else if (checkInternet == false) {
+        showAlertDialog(context, "Alert", "Failed to Sync:No connectivity");
+      } else {
+        showAlertDialog(context, "Alert", "Sync Failed!");
+      }
 
-    showAlertDialog(context, "Alert", "Sync Failed!");
-
-  }
-
-
-
-      if(pr.isShowing())
-      {
+      if (pr.isShowing()) {
         pr.hide();
       }
-
 
       return true;
     }
@@ -421,8 +318,7 @@ else
             fontFamily: 'Raleway',
           )),
       onPressed: () {
-        try
-        {
+        try {
           if (Navigator.canPop(context) == true) {
             Navigator.pop(context);
           }
@@ -430,13 +326,9 @@ else
           if (pr.isShowing()) {
             pr.hide();
           }
+        } catch (e) {
+          "";
         }
-      catch(e)
-        {
-            "";
-
-        }
-
       },
     );
 
@@ -464,7 +356,6 @@ else
           fontFamily: 'Raleway',
         ),
       ),
-
     );
     showDialog(
       barrierDismissible: true,
@@ -476,13 +367,10 @@ else
   }
 
   ///================================== show alert =========================
-///======================== dist list==========================
-
-
+  ///======================== dist list==========================
 
   String assertiveURL =
       "http://alkhair.rextech.pk/alkhair/storage/app/public/images/distributors/";
-
 
   String _splitString(String value) {
     var arrayOfString = value.split(',');
@@ -492,50 +380,30 @@ else
     return arrayOfString.first;
   }
 
-
   Future<List<Dist>> _getDist() async {
     List<Dist> distList = [];
 
-
     try {
       distList = await loadDataDistributor();
-    }
-    catch (e) {
-
-    }
-
-
-
+    } catch (e) {}
 
     finalcheck = distList;
 
-
     if (pr.isShowing()) {
       pr.hide();
-    }
-    else {
+    } else {
       if (pr.isShowing()) {
         pr.hide();
       }
     }
 
-
     return distList;
   }
-
-
-
-
 
   ///======================== dist list==========================
   ///
   @override
   Widget build(BuildContext context) {
-
-
-
-
-
     pr = ProgressDialog(context,
         type: ProgressDialogType.normal, isDismissible: true);
 
@@ -561,7 +429,6 @@ else
           color: Colors.grey),
     );
 
-
     pr.update(
       progress: 50.0,
       message: "Please wait...",
@@ -574,29 +441,26 @@ else
           color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600),
     );
 
-
-
     return FutureBuilder(
         future: getValues(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           return Scaffold(
               drawer: NavBar(
-                  status: statusNav,
-                  id: widget.id,
-                  email: emailNav,
-                  name: nameNav,
-                  latlng: latlngNav,
-
-              zone:zoneNav,
+                status: statusNav,
+                id: widget.id,
+                email: emailNav,
+                name: nameNav,
+                latlng: latlngNav,
+                zone: zoneNav,
                 designation: designationNav,
-
               ),
               key: _scaffoldKey,
-              body: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
-                  child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 5),
-                      child: Column(
+              body:
+
+              SingleChildScrollView(
+
+
+             child:    Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             AppBar(
@@ -609,7 +473,7 @@ else
                                 onPressed: () =>
                                     _scaffoldKey.currentState?.openDrawer(),
                               ),
-                              title: Text('Al Khair'),
+                              title: Text('Al-Khair Gadoon'),
                               actions: const <Widget>[],
                             ),
                             Container(
@@ -626,8 +490,11 @@ else
                                 ],
                               ),
                             ),
+                            SizedBox(height:20),
+
                             Stack(children: <Widget>[
-                              FutureBuilder(
+
+          FutureBuilder(
                                 future: _getCheckOut(),
                                 initialData: [],
                                 builder: (BuildContext context,
@@ -636,8 +503,7 @@ else
                                     case ConnectionState.none:
                                     case ConnectionState.waiting:
                                       return Center(
-                                          child:
-                                              CircularProgressIndicator());
+                                          child: CircularProgressIndicator());
 
                                     default:
                                       if (snapshot.hasError) {
@@ -650,76 +516,78 @@ else
                                                 height: 200,
                                               )
                                             : ListView.separated(
-                                          shrinkWrap: true, //just set this property
-                                          padding: const EdgeInsets.all(8.0),
+                                          physics:NeverScrollableScrollPhysics(),
 
-                                                physics:
-                                                    NeverScrollableScrollPhysics(),
-                                                scrollDirection:
-                                                    Axis.vertical,
+                                                shrinkWrap:
+                                                    true, //just set this property
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+
+
+                                                scrollDirection: Axis.vertical,
                                                 itemCount:
                                                     snapshot.data!.length,
                                                 itemBuilder:
                                                     (BuildContext context,
                                                         int index) {
-if(index ==snapshot.data!.length)
-  {
+                                                  if (index ==
+                                                      snapshot.data!.length) {
+                                                    return SizedBox(
+                                                      height: 50.0,
+                                                      width: 200,
+                                                      child: Material(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8.0),
+                                                        shadowColor:
+                                                            Colors.blueAccent,
+                                                        color: Color.fromRGBO(
+                                                            55, 75, 167, 1),
+                                                        elevation: 7.0,
+                                                        child: InkWell(
+                                                          onTap: () async {
+                                                            if (finaldist
+                                                                    .isEmpty &&
+                                                                finalcheck
+                                                                    .isEmpty) {
+                                                            } else {
+                                                              submitDist();
 
-    return  SizedBox(
-      height: 50.0,
-      width: 200,
+                                                              submitCheckOut();
+                                                            }
+                                                          },
+                                                          child: const Center(
+                                                            child: Text(
+                                                              'SUBMIT SYNC DATA',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                  fontFamily:
+                                                                      'Raleway'),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }
 
-      child: Material(
-        borderRadius: BorderRadius.circular(8.0),
-        shadowColor: Colors.blueAccent,
-        color: Color.fromRGBO(55, 75, 167, 1),
-        elevation: 7.0,
-        child: InkWell(
-          onTap: () async {
-
-            if(finaldist.isEmpty && finalcheck.isEmpty)
-              {
-
-              }
-            else {
-              submitDist();
-
-              submitCheckOut();
-            }
-          },
-          child: const Center(
-            child: Text(
-              'SUBMIT SYNC DATA',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.normal,
-                  fontFamily: 'Raleway'),
-            ),
-          ),
-        ),
-      ),
-    );
-
-
-  }
-
-
-                                                      return ListTile(
+                                                  return ListTile(
                                                     onTap: () {
                                                       // submitDist(snapshot.data[index]);
                                                     },
                                                     title: (Center(
                                                       child: Text(
-                                                        snapshot.data[index]
-                                                            .date,
+                                                        snapshot
+                                                            .data[index].date,
                                                         style: TextStyle(
                                                             fontFamily:
                                                                 'Raleway',
                                                             fontWeight:
-                                                                FontWeight
-                                                                    .bold,
-                                                            color:
-                                                                Colors.grey),
+                                                                FontWeight.bold,
+                                                            color: Colors.grey),
                                                       ),
                                                     )),
                                                     subtitle: Column(
@@ -728,13 +596,10 @@ if(index ==snapshot.data!.length)
                                                               snapshot
                                                                   .data[index]
                                                                   .started_at),
-
                                                           Text("End Time: " +
                                                               snapshot
                                                                   .data[index]
                                                                   .ended_at),
-
-
                                                         ]),
                                                     selectedColor:
                                                         Color.fromRGBO(
@@ -743,40 +608,25 @@ if(index ==snapshot.data!.length)
                                                         Color.fromRGBO(
                                                             55, 75, 167, 1),
                                                     selected: false,
-                                                    focusColor:
-                                                        Color.fromRGBO(
-                                                            55, 75, 167, 1),
+                                                    focusColor: Color.fromRGBO(
+                                                        55, 75, 167, 1),
                                                   );
                                                 },
                                                 separatorBuilder:
                                                     (context, index) {
-                                                  return Divider(thickness: 2,);
+                                                  return Divider(
+                                                    thickness: 2,
+                                                  );
                                                 },
-
-
-
                                               );
                                       }
                                   }
                                 },
                               ),
-
-
-
-
                             ]),
-
-
                             Container(
 
-                              height: MediaQuery
-                                  .of(context)
-                                  .size
-                                  .height +200,
-
-                              child:Stack(children:<Widget>[
-
-
+                              child: Stack(children: <Widget>[
                                 FutureBuilder(
                                   future: _getDist(),
                                   initialData: [],
@@ -790,171 +640,136 @@ if(index ==snapshot.data!.length)
                                         if (snapshot.hasError) {
                                           ;
 
-                                          return Center(
-
-                                              child: Text(''));
+                                          return Center(child: Text(''));
                                         } else {
                                           return snapshot.data == null
                                               ? SizedBox(
-                                            height: 200,
-                                          )
+                                                  height: 200,
+                                                )
                                               : ListView.separated(
-                                            physics:
-                                            NeverScrollableScrollPhysics(),
-                                            scrollDirection: Axis.vertical,
-                                            itemCount: snapshot.data!.length+1,
-                                            itemBuilder: (BuildContext context,
-                                                int index) {
+                                            shrinkWrap: true,
+                                            physics: ClampingScrollPhysics(),
+                                            scrollDirection:
+                                                      Axis.vertical,
+                                                  itemCount:
+                                                      snapshot.data!.length + 1,
+                                                  itemBuilder:
+                                                      (BuildContext context,
+                                                          int index) {
+                                                    if (index ==
+                                                        snapshot.data!.length) {
+                                                      return Container(
+                                                        height: 50.0,
+                                                        width: 50,
+                                                        margin:
+                                                            EdgeInsets.fromLTRB(
+                                                                10, 0, 10, 0),
+                                                        child: Material(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      8.0),
+                                                          shadowColor:
+                                                              Colors.blueAccent,
+                                                          color: Color.fromRGBO(
+                                                              55, 75, 167, 1),
+                                                          elevation: 7.0,
+                                                          child: InkWell(
+                                                            onTap: () async {
+                                                              await pr.show();
+                                                              if (finaldist
+                                                                      .isEmpty &&
+                                                                  finalcheck
+                                                                      .isEmpty) {
+                                                              } else {
+                                                                submitDist();
 
-                                              if(index == snapshot.data!.length)
-                                                {
-                                                return  Container(
-                                                    height: 50.0,
-                                                    width: 50,
-                                                    margin: EdgeInsets.fromLTRB(10
-                                                        , 0, 10, 0),
+                                                                submitCheckOut();
+                                                              }
+                                                              try {
+                                                                //  showAlertDialog(context,"Alert", "Successfully Synced");
+                                                                //showAlertDialog(context, "Alert", "Data Sync");
+                                                              } catch (e) {}
+                                                              if (pr
+                                                                  .isShowing()) {
+                                                                Future.delayed(
+                                                                    Duration(
+                                                                        seconds:
+                                                                            10),
+                                                                    () {});
 
-                                                    child: Material(
-                                                      borderRadius: BorderRadius.circular(8.0),
-                                                      shadowColor: Colors.blueAccent,
-                                                      color: Color.fromRGBO(55, 75, 167, 1),
-                                                      elevation: 7.0,
-                                                      child: InkWell(
-                                                        onTap: () async{
-await pr.show();
-if(finaldist.isEmpty && finalcheck.isEmpty)
-{
+                                                                await pr.hide();
 
-}
-else {
-  submitDist();
-
-  submitCheckOut();
-
-
-}
-                                                           try {
-                                                           //  showAlertDialog(context,"Alert", "Successfully Synced");
-                                                             //showAlertDialog(context, "Alert", "Data Sync");
-                                                           }
-                                                           catch(e)
-                                                          {
-
-                                                          }
-if(pr.isShowing())
-  {
-
-Future.delayed(Duration(seconds: 10), (){
-
-});
-
-    await pr.hide();
-//Navigator.canPop(context)==true ? Navigator.pop(context):"";
-
-
-  //  showAlertDialog(context, "Alert", "Successfully Synced");
-
-
-
-
-
-
-
-
-  }
-
-
-
-
-                                                        },
-                                                        child: const Center(
-child:InkWell(
-                                                          child: Text(
-                                                            'SUBMIT SYNC DATA',
-                                                            style: TextStyle(
-                                                                color: Colors.white,
-                                                                fontWeight: FontWeight.normal,
-                                                                fontFamily: 'Raleway'),
+                                                              }
+                                                            },
+                                                            child: const Center(
+                                                              child: InkWell(
+                                                                child: Text(
+                                                                  'SUBMIT SYNC DATA',
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .normal,
+                                                                      fontFamily:
+                                                                          'Raleway'),
+                                                                ),
+                                                              ),
+                                                            ),
                                                           ),
-),
+                                                        ),
+                                                      );
+                                                    }
+                                                    return ListTile(
+                                                      leading: CircleAvatar(
+                                                        radius: 50,
+                                                        backgroundImage:
+                                                            MemoryImage(
+                                                          dataFromBase64String(
+                                                              snapshot
+                                                                  .data[index]
+                                                                  .fileOne),
                                                         ),
                                                       ),
-                                                    ),
-                                                  );
-
-
-
-                                              }
-                                              return ListTile(
-                                                leading: CircleAvatar(
-                                                  radius: 50,
-                                                  backgroundImage: MemoryImage(
-
-                                                    dataFromBase64String(
-                                                        snapshot.data[index]
-                                                            .fileOne)   ,
-
-                                                  ),
-
-                                                ),
-                                                onTap: () {
-
-
-
-                                                },
-                                                title: (Text(
-                                                    snapshot.data[index].name)),
-                                                subtitle: Column(children :<Widget>[Text(
-                                                    snapshot.data[index].email
-                                                )
-
-
-
-                                                ]
-
-                                                )
-
-
-
-                                                ,
-
-
-                                                selectedColor: Color.fromRGBO(
-                                                    55, 75, 167, 1),
-                                                selectedTileColor: Color.fromRGBO(
-                                                    55, 75, 167, 1),
-                                                selected: false,
-                                                focusColor: Color.fromRGBO(
-                                                    55, 75, 167, 1),
-                                              );
-                                            },
-
-                                            separatorBuilder: (context, index) {
-                                              return Divider(thickness: 2,);
-                                            },
-                                          );
+                                                      onTap: () {},
+                                                      title: (Text(snapshot
+                                                          .data[index].name)),
+                                                      subtitle: Column(
+                                                          children: <Widget>[
+                                                            Text(snapshot
+                                                                .data[index]
+                                                                .email)
+                                                          ]),
+                                                      selectedColor:
+                                                          Color.fromRGBO(
+                                                              55, 75, 167, 1),
+                                                      selectedTileColor:
+                                                          Color.fromRGBO(
+                                                              55, 75, 167, 1),
+                                                      selected: false,
+                                                      focusColor:
+                                                          Color.fromRGBO(
+                                                              55, 75, 167, 1),
+                                                    );
+                                                  },
+                                                  separatorBuilder:
+                                                      (context, index) {
+                                                    return Divider(
+                                                      thickness: 2,
+                                                    );
+                                                  },
+                                                );
                                         }
                                     }
                                   },
-
-
-
                                 ),
-
-              Divider(thickness: 4,),
-
+                                Divider(
+                                  thickness: 4,
+                                ),
                               ]),
-
                             ),
-
-
-
-
-                  ]
-                      )
-                  )
-              )
-          );
+                          ])));
         });
   }
 }

@@ -228,6 +228,8 @@ class _syncCheckOutNewState extends State<SyncCheckOutNew> {
         request.files
             .add(await http.MultipartFile.fromBytes(
             'avatar[]', dataFromBase64String(element.fileThree),filename: "image_3"));
+
+
         element.working_with_us == null ? "" : element.working_with_us;
 
         Map<String, String> d1 = {
@@ -281,13 +283,11 @@ class _syncCheckOutNewState extends State<SyncCheckOutNew> {
           final respStr = await response.stream.bytesToString();
 
           if (response.statusCode == 200) {
-            // success
+
 
 
             k++;
 
-
-            //   showAlertDialog(context, "Alert", response.reasonPhrase.toString());
 
 
 

@@ -36,16 +36,21 @@ initData() async {
       prefs.getBool("ShouldDisplay") == null ||
       prefs.getDouble("Opacity") == null ||
       prefs.getDouble("Opacity2") == null ||
+      prefs.getDouble("EditCustomer") == null ||
+
       prefs.getString("time") == null ||
       prefs.getString("attendanceID") == null ||
       prefs.getString("designation") == null ||
       prefs.getString("zone") == null ||
       prefs.getDouble("currentLocationLattitude") == null ||
       prefs.getString("startDay") == null ||
+      prefs.getString("Endday") == null ||
       prefs.getDouble("currentLocationLongitude") == null ||
       prefs.getDouble("LocationLattitude") == null ||
       prefs.getDouble("LocationLongitude") == null ||
       prefs.getString("location_key") == null ||
+      prefs.getBool("CheckIn") == false ||
+
       prefs.getBool("CheckIn") == false ||
       prefs.getString("checkOutTime") == null ||
       prefs.getBool("") == false ||
@@ -53,6 +58,7 @@ initData() async {
     prefs.setBool("CheckIn", false);
     prefs.setBool("ShouldDisplay", false);
     prefs.setDouble("Opacity", 1);
+
     prefs.setString("time", "");
     prefs.setString("checkOutTime", "");
     prefs.setString("designation", "");
@@ -70,6 +76,7 @@ initData() async {
     prefs.setDouble("LocationLongitude", 0.0);
 
     prefs.setBool("Endday", false);
+    prefs.setDouble("EditCustomer", 0.3);
 
     prefs.setDouble("Opacity2", 0.3);
     prefs.setBool("isRunning", false);
@@ -230,7 +237,6 @@ Future<void> main() async {
           'added_by': element.added_by.toString(),
           'width' :element.width,
           'depth':element.depth,
-
           'floor': element.floor,
           'owned': element.owned,
           'covered_sale': element.covered_sale,
@@ -255,8 +261,6 @@ Future<void> main() async {
         request.headers.addAll(headers);
         request.fields.addAll(d1);
 
-        //  pr.show();
-
 
 
 
@@ -264,9 +268,9 @@ Future<void> main() async {
 
 
 
-
-
         final respStr = await response.stream.bytesToString();
+
+        print(response.statusCode );
 
         if (response.statusCode == 200) {
           // success

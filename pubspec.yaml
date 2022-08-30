@@ -89,6 +89,9 @@ dependencies:
   permission_handler: ^9.2.0
   cron: ^0.5.0
   workmanager: ^0.4.1
+  flutter_native_image: ^0.0.6+1
+  double_back_to_close: ^2.0.0
+  day_night_time_picker: ^1.0.5
 
 
 
@@ -147,6 +150,15 @@ flutter:
     - assets/redimage.png
     - assets/Login.png
     - assets/Logout.png
+    - assets/editImage.png
+    - assets/EditCustomer.png
+    - assets/AddActivity.png
+    - assets/ViewActivity.png
+    - assets/edit.png
+    - assets/checkin.png
+    - assets/checkout.png
+    - assets/customers.png
+
   #   - images/a_dot_ham.jpeg
 
 

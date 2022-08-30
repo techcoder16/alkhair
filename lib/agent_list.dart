@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:progress_dialog_null_safe/progress_dialog_null_safe.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'listview.dart';
-import 'model/MapLocation.dart';
+
 import 'plugins/custom_dialog.dart';
 import 'model/agent_model.dart';
 
@@ -265,7 +265,7 @@ class _agentListState extends State<AgentList> {
                                 onPressed: () =>
                                     _scaffoldKey.currentState?.openDrawer(),
                               ),
-                              title: Text('Al Khair'),
+                              title: Text('Al-Khair Gadoon'),
                               actions: const <Widget>[],
                             ),
                             Container(
@@ -275,7 +275,7 @@ class _agentListState extends State<AgentList> {
                                   Container(
                                     padding:
                                     EdgeInsets.fromLTRB(50.0, 30.0, 0.0, 0.0),
-                                    child: Text('Distributor List ',
+                                    child: Text('Customer List ',
                                         style: TextStyle(
                                             fontSize: 30.0,
                                             fontWeight: FontWeight.bold)),
@@ -288,7 +288,7 @@ class _agentListState extends State<AgentList> {
                               height: MediaQuery
                                   .of(context)
                                   .size
-                                  .height+300,
+                                  .height*1.1,
                               child: FutureBuilder(
                                 future: _getAgent(),
                                 initialData: [],
@@ -315,6 +315,7 @@ class _agentListState extends State<AgentList> {
                                           scrollDirection: Axis.vertical,
                                           itemCount: snapshot.data!.length,
                                           itemBuilder: (BuildContext context,
+
                                               int index) {
                                             return ListTile(
                                               leading: CircleAvatar(
