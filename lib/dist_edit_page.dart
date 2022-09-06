@@ -143,6 +143,7 @@ class _editDistributorState extends State<EditDistributor> {
   String _value_brand = "";
   List<String> selected = [];
   late List<String> _cityitems;
+List<String> _valueCompanies =[];
 
   late String _name;
   late String _contact;
@@ -205,19 +206,20 @@ class _editDistributorState extends State<EditDistributor> {
 
   LatLng currentLocation = LatLng(0, 0);
 
-  static final List<Brands> _brands = [
-    Brands(id: 1, name: "Al Khair Foam"),
-    Brands(id: 2, name: "I Foam"),
-    Brands(id: 3, name: "Araamco"),
-    Brands(id: 4, name: "Foamage"),
-    Brands(id: 5, name: "SereneFoam"),
+ List<String> _brands = [
+    ( "Al Khair Foam"),
+    ( "I Foam"),
+    ("Araamco"),
+    ("Foamage"),
+    ("SereneFoam"),
   ];
 
-  final _items = _brands
-      .map((brands) => MultiSelectItem<Brands>(brands, brands.name))
-      .toList();
+  //listDist.add(item['name']);
 
-  List<Brands> _selectedBrands = [];
+
+
+
+  List<String> _selectedBrands = [];
 
   Future getGalleryImage() async {
     var image =
@@ -312,6 +314,8 @@ class _editDistributorState extends State<EditDistributor> {
     id = await preferences.getString("id").toString();
 
 
+
+
     Map<String, String> data = {
       'distributor_type': valueType.toString(),
       'name': distributor,
@@ -374,6 +378,7 @@ class _editDistributorState extends State<EditDistributor> {
       }
     });
 
+
     request.headers.addAll(headers);
     request.fields.addAll(data);
 
@@ -381,6 +386,8 @@ class _editDistributorState extends State<EditDistributor> {
 
     http.StreamedResponse response = await request.send();
     final respStr = await response.stream.bytesToString();
+
+    print(response.reasonPhrase);
 
 
     if (response.statusCode == 200) {
@@ -393,6 +400,13 @@ class _editDistributorState extends State<EditDistributor> {
       try {
 
         showAlertDialog(context, "Alert", decodedMap['message'],0,pr);
+
+
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => BoardView()));
+
+
+
       } catch (e) {
         print(e);
       }
@@ -491,6 +505,11 @@ class _editDistributorState extends State<EditDistributor> {
     _distributorSaleController.text = widget.covered_sale;
     _distributorContactTController.text = widget.contact_no_2;
     _value_brand = widget.our_brands;
+    final splitNames= widget.our_brands.split(',');
+    for (int i = 0; i < splitNames.length; i++){
+      _valueCompanies.add(splitNames[i]);
+    }
+print(_valueCompanies);
 
     _distributorShopSizeControllerw.text = widget.width;
     _distributorShopSizeController.text = widget.depth;
@@ -513,21 +532,6 @@ class _editDistributorState extends State<EditDistributor> {
     if (spBrand.length < 1) {
       fileOne = XFile(assertiveURL + spImage[0]);
     }
-
-    if (spBrand.length < 1) {
-      _selectedBrands.add(new Brands(id: 0, name: spBrand[0]));
-    } else if (spBrand.length > 1 && spBrand.length < 2) {
-      _selectedBrands.add(new Brands(id: 0, name: spBrand[0]));
-
-      _selectedBrands.add(new Brands(id: 1, name: spBrand[1]));
-    } else if (spBrand.length < 3 && spBrand.length > 2) {
-      _selectedBrands.add(new Brands(id: 0, name: spBrand[0]));
-
-      _selectedBrands.add(new Brands(id: 1, name: spBrand[1]));
-
-      _selectedBrands.add(new Brands(id: 2, name: spBrand[2]));
-    }
-
 
 
 
@@ -1086,7 +1090,7 @@ class _editDistributorState extends State<EditDistributor> {
                         onPressed: () =>
                             _scaffoldKey.currentState?.openDrawer(),
                       ),
-                      title: Text('Al Khair'),
+                      title: Text('Al-Khair Gadoon Ltd.'),
                       actions: const <Widget>[],
                     ),
                     SingleChildScrollView(
@@ -1118,6 +1122,22 @@ class _editDistributorState extends State<EditDistributor> {
                         child: Column(
                           children: <Widget>[
                             Column(children: <Widget>[
+                              Row(
+                                children: const [
+                                  SizedBox(
+                                    width: 40,
+                                  ),
+                                  Text("Shop"),
+                                  SizedBox(
+                                    width: 60,
+                                  ),
+                                  Text("Visiting Card"),
+                                  SizedBox(
+                                    width: 40,
+                                  ),
+                                  Text("Person"),
+                                ],
+                              ),
                               Container(
                                 padding: const EdgeInsets.all(7.0),
                                 decoration: BoxDecoration(
@@ -1304,7 +1324,8 @@ class _editDistributorState extends State<EditDistributor> {
 
                             ),
                             SizedBox(height: 20.0),
-                            TextField(
+                            Visibility(visible: true, child:TextField(
+
                               inputFormatters: <TextInputFormatter>[
                                 FilteringTextInputFormatter.digitsOnly,
                                 new LengthLimitingTextInputFormatter(10),
@@ -1335,7 +1356,8 @@ class _editDistributorState extends State<EditDistributor> {
 
 
 
-                            ),
+                            ),),
+
                             SizedBox(height: 20.0),
                             TextField(
                               controller: _distributorAddressController,
@@ -1516,33 +1538,36 @@ class _editDistributorState extends State<EditDistributor> {
                                     color: Colors.grey,
                                   ),
                                   Expanded(
-                                    child: MultiSelectDialogField(
-                                      initialValue: _selectedBrands,
-                                      items: _items,
+                                    child: DropdownSearch<String>.multiSelection(
+                                      mode: Mode.DIALOG,
+                                      showSearchBox: true,
+                                      selectedItems: _valueCompanies,
 
-                                      selectedColor: Colors.grey,
-                                      buttonIcon: Icon(
-                                        Icons.account_circle,
-                                        color: Colors.grey,
-                                      ),
-                                      title: Text(
-                                        "Brands",
-                                        style: TextStyle(
-                                            fontFamily: 'Raleway',
-                                            fontWeight: FontWeight.normal,
-                                            color: Colors.grey),
-                                      ),
-                                      buttonText: Text(
-                                        "Brands",
-                                        style: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 16,
-                                        ),
-                                      ),
+                                      dropdownSearchDecoration: InputDecoration(
+                                          contentPadding: const EdgeInsets.all(0.0),
+                                          enabledBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(color: Colors.white),
+                                          ),
+                                          labelText: 'Brands *',
+                                          labelStyle: TextStyle(
+                                              fontFamily: 'Raleway',
+                                              fontWeight: FontWeight.normal,
+                                              color: Colors.grey),
 
-                                      onConfirm: (List<Brands> results) {
-                                        _selectedBrands = results;
-                                      },
+                                          focusedBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Color.fromRGBO(55, 75, 167, 1)))),
+
+                                      items: _brands,
+
+
+    onChanged: (value) => setState(() {
+      _selectedBrands = value;
+
+    })
+
+
+
                                     ),
                                   ),
                                 ],
@@ -1824,30 +1849,54 @@ class _editDistributorState extends State<EditDistributor> {
 
                                     int x = 1;
                                     x =  x * validateField(_distributorShopSizeController.text);
+
+
                                     x = x * validateField(_distributorShopNameController.text);
+
 
                                     x = x * validateField(_distributorSaleController.text);
 
+
+
                                     x = x *  validateField(_distributorNameController.text);
+
 
                                     x = x *     validateField(_distributorShopNameController.text);
 
+
+
                                     x = x *      validateField(_distributorContactNumController.text);
+
+
                                     x = x *     validateField(_distributorAddressController.text,);
+
+
                                     x = x *      validateField(  _distributorUSaleController.text      );
+
+
                                     x = x *    validateField(  _distributorFloorController.text      );
+
+
                                     x = x *     validateField(  _distributorTotalSaleController.text      );
+
+
                                     x = x *   validateField(  _distributorCardLimitController.text      );
+
+
+
                                     x = x *   validateField(  _distributorShopSizeControllerw.text      );
 
+
                                     x = x * validateMobile(_distributorContactNumController.text);
-                                    x = x * validateMobile(_distributorContactTController.text);
+
 
                                     x = x *
                                         validateField(
                                             _distributorCompaniesController
                                                 .text);
 
+
+                                    x = x* validateField(_value);
 
 
                                     if (x == 0) {
@@ -1876,10 +1925,11 @@ class _editDistributorState extends State<EditDistributor> {
                                       (fileThree?.path != "assets/noimage.png"
                                           ? fileThree
                                           : XFile("abc def"))!;
+                                      _value_brand = "";
 
                                       _selectedBrands.forEach((element) {
                                         _value_brand +=
-                                            element.name.toString() + ",";
+                                            element.toString() + ",";
                                       });
 
           } catch (e) {
@@ -1928,6 +1978,7 @@ class _editDistributorState extends State<EditDistributor> {
                                       });
 
 
+_value_brand = "";
 
                                     _selectedBrands = [];
                                     }

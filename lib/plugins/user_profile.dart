@@ -38,6 +38,10 @@ class _UserProfileState extends State<UserProfile> {
   String nameNav = "";
   bool loginNav = false;
   String timeNav = "";
+  var address= "";
+  var city= "";
+  var contact_no= "";
+
   String zoneNav = ""; String designationNav = "";
   late List<String> _cityitems;
 
@@ -60,36 +64,21 @@ class _UserProfileState extends State<UserProfile> {
   }
 
 
-  profileUpdate profileRemarks = profileUpdate("address", "city", "contact_no") ;
-
-
   final TextEditingController _contactController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   List<LatLng> latlngNav = [];
   Future<void>  getValues() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    try {
-      statusNav = await preferences.getBool("CheckIn")!;
-    }
-    catch(e)
-    {
-      print(e);
-    }
-    emailNav = await preferences.getString("email")!;
-    idNav = await preferences.getString("id")!;
-    nameNav = await preferences.getString("name")!;
-    loginNav = await preferences.getBool("isLogin")!;
-    try {
-      timeNav = await preferences.getString("time")!;
-    }
-    catch(e)
-    {
-      print(e);
-    }
 
-    zoneNav = await preferences.getString("zone")!;
-    designationNav = await preferences.getString("designation")!;
+    try{statusNav = await preferences.getBool("CheckIn")!;}catch(e)  {print(e);}
+    try{emailNav = await preferences.getString("email")!;}catch(e)  {print(e);}
+    try{idNav = await preferences.getString("id")!;}catch(e)  {print(e);}
+    try{nameNav = await preferences.getString("name")!;}catch(e)  {print(e);}
+    try{loginNav = await preferences.getBool("isLogin")!;}catch(e)  {print(e);}
+    try{timeNav = await preferences.getString("time")!;}catch(e)  {print(e);}
+    try{zoneNav = await preferences.getString("zone")!;}catch(e)  {print(e);}
+    try{designationNav = await preferences.getString("designation")!;   }catch(e)  {print(e);}
 
   }
 
@@ -111,37 +100,41 @@ class _UserProfileState extends State<UserProfile> {
 
 Future<bool> getProfileData()
 async {
-var jsonResponse =null;
+    getValues();
 
-  var response = await http.get(
-    Uri.parse(
-        base_Url + "alkhair/public/api/v1/agent/agents/" +
-            idNav),
-  );
+    try {
+      var jsonResponse = null;
 
-  print(response.body);
+      Map data = {
+        'agn_code':widget.id.toString()
+      };
 
-  if (response.statusCode == 200) {
-    jsonResponse = json.decode(response.body);
 
-       profileRemarks = profileUpdate(
-          jsonResponse['message']["address"].toString(),
-          jsonResponse['message']["city"].toString(),
-          jsonResponse['message']["contact_no"].toString()
+      var response = await http.post(
+
+        Uri.parse(
+            base_Url + "alkhair/public/api/v1/agent/get-agent"),
+
+          headers: {'Content-type': 'application/json'},
+body: json.encode(data)
       );
+print(json.encode(data));
 
+      print(response.body);
 
+      if (response.statusCode == 200) {
+        jsonResponse = json.decode(response.body);
 
-
-
-
-
-
-
+        address = jsonResponse['message']["address"].toString();
+        city = jsonResponse['message']["city"].toString();
+        contact_no = jsonResponse['message']["contact_no"].toString();
+      }
+    }
+    catch(e)
+  {
+    print(e);
 
   }
-  print(profileRemarks.address);
-
 return true;
 
 
@@ -284,15 +277,17 @@ print(response.body);
   void initState() {
 
 
-
+    getProfileData();
  
 
     setState(() {
-      getValues();
       getProfileData();
+      getValues();
+
 
       _checkConnectivityState();
     });
+    getProfileData();
     List dataList = CitiesJson["data"]["list"];
 
     _cityitems = List.generate(
@@ -305,6 +300,7 @@ print(response.body);
 
   @override
   Widget build(BuildContext context) {
+
     //============================================= loading dialoge
     pr = ProgressDialog(context,
         type: ProgressDialogType.normal, isDismissible: false);
@@ -333,7 +329,8 @@ print(response.body);
     return FutureBuilder(
         future: Future.wait([getValues(),_checkConnectivityState(),getProfileData()]),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          print(snapshot.data);
+
+
 
           return Scaffold(
               drawer: NavBar(
@@ -368,7 +365,7 @@ print(response.body);
                           onPressed: () =>
                               _scaffoldKey.currentState?.openDrawer(),
                         ),
-                        title: Text('Al-Khair Gadoon'),
+                        title: Text('Al-Khair Gadoon Ltd.'),
                         actions: const <Widget>[],
                       ),
                       Container(
@@ -420,7 +417,7 @@ print(response.body);
 
                                 controller: _addressController,
                                 decoration:  InputDecoration(
-                                  hintText: profileRemarks.address,
+                                  hintText:address,
 
                                     labelStyle: TextStyle(
                                         fontFamily: 'Raleway',
@@ -448,7 +445,7 @@ print(response.body);
                                         borderSide:
                                         BorderSide(color: Colors.white),
                                       ),
-                                      labelText: profileRemarks.city,
+                                      labelText: city,
 
                                       labelStyle: TextStyle(
                                           fontFamily: 'Raleway',
@@ -500,7 +497,8 @@ print(response.body);
 
                                     prefixText: '+92 ',
 
-                                    hintText: profileRemarks.contact_no,
+                                    labelText: contact_no,
+
                                     labelStyle: TextStyle(
                                         fontFamily: 'Raleway',
                                         fontWeight: FontWeight.normal,
@@ -524,13 +522,28 @@ print(response.body);
                                   elevation: 7.0,
                                   child: InkWell(
                                     onTap: () async {
-print(_contactController.text);
+
 
                                       bool valueContactNumber = validateMobile(_contactController.text);
                                       print(valueContactNumber);
 
+                          if(_contactController.text == "")
+                            {
+                              _contactController.text = contact_no;
+                            }
 
-                                      if(valueContactNumber == true)
+                                      if(_addressController.text == "")
+                                      {
+                                        _addressController.text = address;
+                                      }
+                                      if(_cityController.text == "")
+                                      {
+                                        _cityController.text = city;
+                                      }
+
+
+
+                                      if(valueContactNumber = true)
 
                                       {
                                             updateProfile(

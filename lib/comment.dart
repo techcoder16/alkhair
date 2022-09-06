@@ -387,7 +387,7 @@ class _CommentScreenState extends State<CommentPage> {
                       ),
                       onPressed: () => _scaffoldKey.currentState?.openDrawer(),
                     ),
-                    title: Text('Al-Khair Gadoon'),
+                    title: Text('Al-Khair Gadoon Ltd.'),
                     actions: const <Widget>[],
                   ),
                   Container(

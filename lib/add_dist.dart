@@ -82,6 +82,8 @@ class _addDistributorState extends State<addDistributor> {
   File? _image;
   String? countryValue = "";
   String? stateValue = "";
+  bool isTapped=false;
+
   String? cityValue = "";
   bool checkInternet = false;
   late bool v1 = false;
@@ -336,6 +338,7 @@ class _addDistributorState extends State<addDistributor> {
         img64FileThree,
         width,
         depth);
+
 
 //loadDataDistributor();
     Navigator.push(context, MaterialPageRoute(builder: (context) => BoardView()));
@@ -976,7 +979,7 @@ class _addDistributorState extends State<addDistributor> {
                         onPressed: () =>
                             _scaffoldKey.currentState?.openDrawer(),
                       ),
-                      title: Text('Al Khair'),
+                      title: Text('Al-Khair Gadoon Ltd.'),
                       actions: const <Widget>[],
                     ),
                     SingleChildScrollView(
@@ -1683,9 +1686,15 @@ class _addDistributorState extends State<addDistributor> {
                                 borderRadius: BorderRadius.circular(8.0),
                                 shadowColor: Colors.blueAccent,
                                 color: Color.fromRGBO(55, 75, 167, 1),
-                                elevation: 7.0,
-                                child: GestureDetector(
-                                  onTap: () {
+
+                                child: InkWell(
+
+                                  onTap: ()
+                                  {
+                                  if(!isTapped){
+
+
+
                                     int x = 1;
                                     x = x *
                                         validateField(
@@ -1748,6 +1757,8 @@ class _addDistributorState extends State<addDistributor> {
                                                 .text);
 
 
+                        x = x* validateField(_value);
+
 
                                     if (x == 0) {
                                       showAlertDialog(
@@ -1792,6 +1803,8 @@ class _addDistributorState extends State<addDistributor> {
                                               "assets/noimage.png" &&
                                           fileOne?.path !=
                                               "assets/noimage.png") {
+
+                                        isTapped=true;
                                         submit(
                                                 _distributorNameController.text,
                                                 _distributorShopNameController
@@ -1832,6 +1845,7 @@ class _addDistributorState extends State<addDistributor> {
                                                     .text)
                                             .then((value) {
                                           setState(() {
+
                                             saveAdress = value;
                                             _selectedBrands = [];
                                             _value_brand = "";
@@ -1845,9 +1859,10 @@ class _addDistributorState extends State<addDistributor> {
                                             "Image Missing", 0);
                                       }
                                     }
-                                  },
+                                  }
+        },
                                   child: const Center(
-                                    child: InkWell(
+
                                       child: Text(
                                         'Submit',
                                         style: TextStyle(
@@ -1855,7 +1870,7 @@ class _addDistributorState extends State<addDistributor> {
                                             fontWeight: FontWeight.normal,
                                             fontFamily: 'Raleway'),
                                       ),
-                                    ),
+
                                   ),
                                 ),
                               ),

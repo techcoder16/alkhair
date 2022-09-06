@@ -42,6 +42,27 @@ class _AddActivityState extends State<AddActivity> {
   late List<String> newRemarksOn = [];
 
   late List<String> newRemarksId = [];
+List<int> hours =[];
+List<int> minutes = [];
+List<String> dN = [];
+
+
+  var items = <int>[
+    1,2,3,4,5,6,7,8,9,10,11,12
+  ];
+
+
+  var minutesArray = <int>[
+    0,1,2,3,4,5,6,7,8,9,10,11,12
+    ,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29
+    ,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48
+    ,49,50,51,52,53,54,55,56,57,58,59
+  ];
+
+
+  var man=<String>[
+    'AM','PM'
+  ];
 
   List<String> listDist = [];
   List<String> listDistCode = [];
@@ -83,7 +104,7 @@ class _AddActivityState extends State<AddActivity> {
   final TextEditingController _userDateController = TextEditingController();
   final TextEditingController _remarksController = TextEditingController();
   final List<TextEditingController> _valueController = [];
-  final List<TextEditingController> _valueTimeController = [];
+  final List<String> _valueTimeController = [];
 
   void validateField(String val) {
     if (val.isEmpty) {
@@ -158,6 +179,9 @@ class _AddActivityState extends State<AddActivity> {
         newRemarksOn = [];
         _valueController.clear();
         _timeController.clear();
+        hours.clear();
+        minutes.clear();
+        dN.clear();
         _valueTimeController.clear();
 
         newRemarksId = [];
@@ -192,7 +216,11 @@ class _AddActivityState extends State<AddActivity> {
           _timeController.add(_startTime);
 
 
-          _valueTimeController.add(TextEditingController(text: ""));
+          _valueTimeController.add("");
+          hours.add(12);
+          minutes.add(0);
+          dN.add('AM');
+
         }
       } catch (e) {
         print(e);
@@ -336,13 +364,10 @@ try {designationNav = preferences.getString("designation")!;      }catch(e){}
       name,
       List<String> newRemarksOn,
       List<TextEditingController> valueController,
-      List<TimeOfDay> timeController) async {
+      List<String> timenew) async {
     var jsonResponse = null;
-    List<String> timeNew = [];
 
-    timeController.forEach((element) {
-      timeNew.add(element.format(context));
-    });
+
 
     var timeNow = DateTime.now();
     newRemarksOn.toSet().toList();
@@ -362,11 +387,11 @@ try {designationNav = preferences.getString("designation")!;      }catch(e){}
       "agn_code": idNav,
       "dst_code": dst_code,
       "remarks": remarks,
-      "time": timeNew,
+      "time": timenew,
     };
 
 //return false;
-
+print(json.encode(data));
     pr.show();
     var response = await http.post(
         Uri.parse(
@@ -376,7 +401,7 @@ try {designationNav = preferences.getString("designation")!;      }catch(e){}
           'Accept': 'application/json'},
         body: json.encode(data));
 
-
+print(response.body);
     if (response.statusCode == 200) {
       jsonResponse = json.decode(response.body);
       if (jsonResponse == null) {
@@ -560,7 +585,7 @@ setState(() {
                           onPressed: () =>
                               _scaffoldKey.currentState?.openDrawer(),
                         ),
-                        title: Text('Al-Khair Gadoon'),
+                        title: Text('Al-Khair Gadoon Ltd.'),
                         actions: const <Widget>[],
                       ),
                       Container(
@@ -714,7 +739,7 @@ setState(() {
                                           height: 200,
                                         )
                                       : ListView.builder(
-                                          itemExtent: 240.0,
+                                          itemExtent: 260.0,
                                           physics:
                                               NeverScrollableScrollPhysics(),
                                           shrinkWrap: true,
@@ -738,7 +763,7 @@ setState(() {
                                                                         context)
                                                                     .size
                                                                     .width *
-                                                                0.15),
+                                                                0.17),
                                                     children: [
                                                       TableRow(children: [
                                                         Container(
@@ -827,6 +852,7 @@ setState(() {
                                                       TableRow(children: [
                                                         Container(
                                                           height: 130,
+
                                                           child: Column(
                                                               mainAxisAlignment:
                                                                   MainAxisAlignment
@@ -858,7 +884,20 @@ setState(() {
                                                                   CrossAxisAlignment
                                                                       .center,
                                                               children: [
-                                                                TextField(
+                                                                SizedBox(
+                                                                  height: 5,
+                                                                ),
+
+                                                                Text(
+                                                               _timeController[index].format(context),
+
+                                            style:TextStyle(
+                                            fontFamily: 'Raleway',
+                                            fontWeight: FontWeight.normal,
+                                            color: Colors.grey),
+
+                                                                ),
+                                                                /*TextField(
                                                                     controller:
                                                                         _valueTimeController[
                                                                             index],
@@ -880,13 +919,12 @@ setState(() {
                                                                           InputBorder
                                                                               .none,
 
-                                                                          labelText:  _timeController[
-                                                                          index]
+                                                                          labelText:  _valueTimeController[
+                                                                          index].text
 
-                                                                              .format(
-                                                                              context)
                                                                     ),
                                                                     //
+
                                                                     textAlign:
                                                                         TextAlign
                                                                             .center,
@@ -922,6 +960,7 @@ setState(() {
                                                                             context,
                                                                         value: _timeController[
                                                                             index],
+
                                                                         onChange:
                                                                             (TimeOfDay
                                                                                 newDay) {
@@ -932,7 +971,10 @@ setState(() {
 
                                                                           _valueTimeController[index].text =
                                                                               _timeController[index].format(context);
+                                                                          print( _valueTimeController[index].text);
+                                                                          print( _timeController[index].hour);
                                                                         },
+
                                                                         disableMinute:
                                                                             false,
 
@@ -946,6 +988,8 @@ setState(() {
 
                                                                           _valueTimeController[index].text =
                                                                               _timeController[index].format(context);
+print( _timeController[index].format(context));
+                                                                          print( _valueTimeController[index].text);
 
                                                                           debugPrint(
                                                                               "[debug datetime]:  $dateTime");
@@ -960,6 +1004,123 @@ setState(() {
                                                                             .white),
                                                                   ),
                                                                 ),
+                                                                */
+                                                          Row(children: [
+
+
+Container(
+width:42,
+                                                           child:     DropdownButtonFormField<int>(
+
+                                                                  decoration: InputDecoration(
+
+                                                                    contentPadding: const EdgeInsets.all(0.0),
+                                                                      labelText: 'Hours',
+
+                                                                      labelStyle: TextStyle(
+                                                                          fontFamily: 'Raleway',
+                                                                          fontWeight: FontWeight.normal,
+                                                                          fontSize: 2,
+                                                                          color: Colors.grey),
+                                                            ),
+                                                                  items: items.map((int value) {
+                                                                    return DropdownMenuItem<int>(
+                                                                      value: value,
+                                                                      child: Text(value.toString()),
+                                                                    );
+                                                                  }).toList(),
+                                                                  onChanged: (value) {
+                                                                   hours[index] = value!;
+
+
+                                                                     print(hours);
+                                                                  },
+                                                                ),
+
+
+
+
+
+),SizedBox(
+                                         width: 20,
+
+                                            )
+
+
+
+                                                         ,   Container(
+                                                                width:42,
+                                                                alignment: Alignment.center,
+                                                                child:     DropdownButtonFormField<int>(
+
+                                                                  decoration: InputDecoration(
+
+                                                                    contentPadding: const EdgeInsets.all(0.0),
+                                                                    labelText: 'Min',
+
+                                                                    labelStyle: TextStyle(
+                                                                        fontFamily: 'Raleway',
+                                                                        fontWeight: FontWeight.normal,
+                                                                        fontSize: 2,
+                                                                        color: Colors.grey),
+                                                                  ),
+                                                                  items: minutesArray.map((int value) {
+                                                                    return DropdownMenuItem<int>(
+                                                                      value: value,
+                                                                      child: Text(value.toString()),
+                                                                    );
+                                                                  }).toList(),
+                                                                  onChanged: (value) {
+                                                                    minutes[index] = value!;
+
+                                                                    print(minutes);
+                                                                  },
+                                                                ),
+
+
+
+)
+
+
+                                                            ,
+
+
+                                                                ]),
+
+                                                                Container(
+                                                                  width: 49,
+                                                                  child:     DropdownButtonFormField<String>(
+
+                                                                    decoration: InputDecoration(
+
+                                                                      contentPadding: const EdgeInsets.all(0.0),
+                                                                      labelText: 'PM',
+
+                                                                      labelStyle: TextStyle(
+                                                                          fontFamily: 'Raleway',
+                                                                          fontWeight: FontWeight.normal,
+                                                                          fontSize: 2,
+                                                                          color: Colors.grey),
+                                                                    ),
+                                                                    items: man.map((String value) {
+                                                                      return DropdownMenuItem<String>(
+                                                                        value: value,
+                                                                        child: Text(value),
+                                                                      );
+                                                                    }).toList(),
+                                                                    onChanged: (value) {
+                                                                      dN[index] = value!;
+
+                                                                      print(dN);
+                                                                    },
+                                                                  ),
+
+
+
+                                                                )
+
+
+
                                                               ]),
                                                         ),
                                                         Container(
@@ -1056,6 +1217,20 @@ setState(() {
                           child: InkWell(
                             onTap: () async {
                               if (valueDate == true) {
+                                var i = 0;
+                                hours.forEach((element) {
+
+
+                                  _valueTimeController[i] = element.toString() + ":" + minutes[i].toString() + " "  + dN[i];
+                                  i++;
+
+                                });
+
+                                print(_valueTimeController);
+
+
+
+
                                 AddActivityNew(
                                     widget.id,
                                     newDistCode,
@@ -1063,7 +1238,15 @@ setState(() {
                                     _distController.text,
                                     newRemarksOn,
                                     _valueController,
-                                    _timeController);
+                                    _valueTimeController);
+
+
+
+
+
+
+
+
                               } else {
                                 showAlertDialog(
                                     context, "Alert", "No Attendence Found");

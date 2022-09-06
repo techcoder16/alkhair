@@ -218,9 +218,94 @@ print("start day");
   ///================================== get values from shared preferences ====
   Future<void> getValues() async {
 
-await getDropDownCustomer();
+
+
 
     SharedPreferences preferences = await SharedPreferences.getInstance();
+
+
+var now = new DateTime.now();
+var berlinWallFellDate = new DateTime.now();
+print(now);
+
+String formattedTime = DateFormat.Hms().format(now);
+print(formattedTime);
+
+
+zone = await preferences.getString("zone")!;
+designation = await preferences.getString("designation")!;
+email = await preferences.getString("email").toString();
+id = await preferences.getString("id").toString();
+name = await preferences.getString("name").toString();
+login = await preferences.getBool("isLogin")!;
+
+
+
+
+try {
+  coordinates = await preferences.getString("location_key");
+} catch (e) {
+  print(e);
+}
+
+
+try {
+  endDay = await preferences.getString("SessionDay")!;
+} catch (e) {}
+
+
+
+try {
+  checkinOp = await preferences.getDouble("Opacity")!;
+} catch (e) {}
+try {
+  checkOutOpacity = await preferences.getDouble("Opacity2")!;
+} catch (e) {}
+try {
+  checkinOp = await preferences.getDouble("Opacity")!;
+} catch (e) {}
+try {
+  newDate = await preferences.getString("time")!;
+} catch (e) {}
+
+try {
+  checkoutDate = await preferences.getString("checkOutTime")!;
+} catch (e) {}
+
+try {
+  shouldDisplay = await preferences.getBool("ShouldDisplay")!;
+} catch (e) {}
+
+try {
+
+  getEditOpacity = await preferences.getDouble("EditCustomer")!;
+} catch (e) {}
+
+
+
+currentlattitude = await preferences.getDouble("LocationLattitude")!;
+currentlongitude = await preferences.getDouble("LocationLongitude")!;
+
+try {
+  checkTapcount = await preferences.getBool("CheckIn")!;
+  checkEndDay = await preferences.getBool("SessionDay")!;
+} catch (e) {}
+
+try {} catch (e) {}
+
+try {
+  imageLogin = preferences.getString("avatar")!;
+} catch (e) {}
+
+if (checkTapcount == true) {
+  if (await BackgroundLocator.isServiceRunning()) {
+  } else {
+    _onStart();
+  }
+}
+
+
+    await getDropDownCustomer();
 
 
     var jsonResponse = null;
@@ -267,84 +352,6 @@ catch(e)
     }
 
 
-    var now = new DateTime.now();
-    var berlinWallFellDate = new DateTime.now();
-    print(now);
-
-    String formattedTime = DateFormat.Hms().format(now);
-    print(formattedTime);
-
-
-    zone = await preferences.getString("zone")!;
-    designation = await preferences.getString("designation")!;
-    email = await preferences.getString("email").toString();
-    id = await preferences.getString("id").toString();
-    name = await preferences.getString("name").toString();
-    login = await preferences.getBool("isLogin")!;
-
-
-
-
-    try {
-      coordinates = await preferences.getString("location_key");
-    } catch (e) {
-      print(e);
-    }
-
-
-    try {
-      endDay = await preferences.getString("SessionDay")!;
-    } catch (e) {}
-
-
-
-    try {
-      checkinOp = await preferences.getDouble("Opacity")!;
-    } catch (e) {}
-    try {
-      checkOutOpacity = await preferences.getDouble("Opacity2")!;
-    } catch (e) {}
-    try {
-      checkinOp = await preferences.getDouble("Opacity")!;
-    } catch (e) {}
-    try {
-      newDate = await preferences.getString("time")!;
-    } catch (e) {}
-
-    try {
-      checkoutDate = await preferences.getString("checkOutTime")!;
-    } catch (e) {}
-
-    try {
-      shouldDisplay = await preferences.getBool("ShouldDisplay")!;
-    } catch (e) {}
-
-    try {
-      getEditOpacity = await preferences.getDouble("EditCustomer")!;
-    } catch (e) {}
-
-
-
-    currentlattitude = await preferences.getDouble("LocationLattitude")!;
-    currentlongitude = await preferences.getDouble("LocationLongitude")!;
-
-    try {
-      checkTapcount = await preferences.getBool("CheckIn")!;
-      checkEndDay = await preferences.getBool("SessionDay")!;
-    } catch (e) {}
-
-    try {} catch (e) {}
-
-    try {
-      imageLogin = preferences.getString("avatar")!;
-    } catch (e) {}
-
-    if (checkTapcount == true) {
-      if (await BackgroundLocator.isServiceRunning()) {
-      } else {
-        _onStart();
-      }
-    }
 
   }
 
@@ -852,6 +859,7 @@ print(response.body);
     initPlatformState();
 
     setState(() {
+     getDropDownCustomer();
       getValues();
 
       try {
@@ -993,154 +1001,158 @@ print(response.body);
               child: Stack(children: <Widget>[
                 Container(
                     child: Stack(children: <Widget>[
-                  Container(
-                    alignment: Alignment.center,
-                    margin: EdgeInsets.fromLTRB(20, 360, 10, 0),
-                    height: 100,
-                    child: const Text(
-                      "Pick your choice",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.normal,
-                          fontSize: 17,
-                          fontFamily: 'Raleway'),
-                    ),
-                  ),
-                  Container(
-                    alignment: Alignment.center,
-                    margin: EdgeInsets.fromLTRB(20, 450, 10, 0),
-                    height: 100,
-                    width: 100,
-                    child: InkWell(
-                      overlayColor: MaterialStateProperty.all(Colors.white),
-                      hoverColor: Colors.white,
-                      highlightColor: Colors.white,
-                      onTap: () async {
-                        if (checkTapcount == false) {
-                          await pr.show();
+                      Container(
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.fromLTRB(20, 360, 10, 0),
+                        height: 100,
+                        child: const Text(
+                          "Pick your choice",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 17,
+                              fontFamily: 'Raleway'),
+                        ),
+                      ),
+                      Container(
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.fromLTRB(20, 450, 10, 0),
+                        height: 100,
+                        width: 100,
+                        child: InkWell(
+                          overlayColor: MaterialStateProperty.all(Colors.white),
+                          hoverColor: Colors.white,
+                          highlightColor: Colors.white,
+                          onTap: () async {
+                            if (checkTapcount == false) {
+                              await pr.show();
 
-                          _onStart();
+                              _onStart();
 
-                          now = DateTime.now();
-                          formatter = DateFormat('yyyy-MM-dd');
+                              now = DateTime.now();
+                              formatter = DateFormat('yyyy-MM-dd');
 
-                          formattedDate = DateFormat.Hms().format(
-                            now,
-                          );
+                              formattedDate = DateFormat.Hms().format(
+                                now,
+                              );
 
-                          newDate = formatter.format(now).toString() +
-                              " " +
-                              formattedDate.toString();
-                          check_time = formattedDate;
-                          checkinOp = 0.3;
+                              newDate = formatter.format(now).toString() +
+                                  " " +
+                                  formattedDate.toString();
+                              check_time = formattedDate;
+                              checkinOp = 0.3;
 
-                          shouldDisplay = !shouldDisplay;
+                              shouldDisplay = !shouldDisplay;
 
-                          SharedPreferences sharedPreferences =
+                              SharedPreferences sharedPreferences =
                               await SharedPreferences.getInstance();
 
-                          sharedPreferences.setBool(
-                              "ShouldDisplay", shouldDisplay);
-                          sharedPreferences.remove("location_key");
+                              sharedPreferences.setBool(
+                                  "ShouldDisplay", shouldDisplay);
+                              sharedPreferences.remove("location_key");
 
-                          _getUserLocation();
-                          sharedPreferences.setDouble(
-                              "LocationLattitude", currentlattitude);
-                          sharedPreferences.setDouble(
-                              "LocationLongitude", currentlongitude);
+                              _getUserLocation();
+                              sharedPreferences.setDouble(
+                                  "LocationLattitude", currentlattitude);
+                              sharedPreferences.setDouble(
+                                  "LocationLongitude", currentlongitude);
 
-                          if (currentPostion.latitude == 0) {
-                            currentPostion = LatLng(
-                                await sharedPreferences
-                                    .getDouble("LocationLattitude")!,
-                                await sharedPreferences
-                                    .getDouble("LocationLongitude")!);
-                          }
-                          _addMarker(
-                              LatLng(currentPostion.latitude, currentlongitude),
-                              "origin",
-                              BitmapDescriptor.defaultMarker);
-
-                          checkIn(this.id, currentPostion,
-                              formatter.format(now).toString(), newDate, "");
-                          checkOutOpacity = 1;
-
-                          sharedPreferences.setDouble("Opacity", checkinOp);
-                          sharedPreferences.setDouble(
-                              "Opacity2", checkOutOpacity);
-
-                          sharedPreferences.setString("time", newDate);
-
-                          checkTapcount = true;
-
-                          sharedPreferences.setBool("CheckIn", true);
-
-                          if (start_day == "") {
-                            start_day = newDate;
-                            sharedPreferences.setString("startDay", newDate);
-                          }
-
-                          if (await pr.isShowing()) {
-                            try {
-                              await pr.hide();
-                              pr.hide();
-
-                              pr.hide();
-                              if (Navigator.canPop(context)) {
-                                Navigator.pop(context);
+                              if (currentPostion.latitude == 0) {
+                                currentPostion = LatLng(
+                                    await sharedPreferences
+                                        .getDouble("LocationLattitude")!,
+                                    await sharedPreferences
+                                        .getDouble("LocationLongitude")!);
                               }
-                            } catch (e) {
+                              _addMarker(
+                                  LatLng(
+                                      currentPostion.latitude, currentlongitude),
+                                  "origin",
+                                  BitmapDescriptor.defaultMarker);
+
+                              checkIn(this.id, currentPostion,
+                                  formatter.format(now).toString(), newDate, "");
+                              checkOutOpacity = 1;
+
+                              sharedPreferences.setDouble("Opacity", checkinOp);
+                              sharedPreferences.setDouble(
+                                  "Opacity2", checkOutOpacity);
+
+                              sharedPreferences.setString("time", newDate);
+
+                              checkTapcount = true;
+
+                              sharedPreferences.setBool("CheckIn", true);
+
+                              if (start_day == "") {
+                                start_day = newDate;
+                                sharedPreferences.setString("startDay", newDate);
+                              }
+
+                              if (await pr.isShowing()) {
+                                try {
+                                  await pr.hide();
+                                  pr.hide();
+
+                                  pr.hide();
+                                  if (Navigator.canPop(context)) {
+                                    Navigator.pop(context);
+                                  }
+                                } catch (e) {
+                                  pr.hide();
+                                  print(e);
+                                }
+                              }
                               pr.hide();
-                              print(e);
+                              await pr.hide();
+
+                              showAlertDialog(
+                                  context, "Alert", "Check In Successfull!!!");
+
+                              _getUserLocation();
                             }
-                          }
-                          pr.hide();
-                          await pr.hide();
-
-                          showAlertDialog(
-                              context, "Alert", "Check In Successfull!!!");
-
-                          _getUserLocation();
-                        }
-                      },
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(height: 10.0),
-                          Image.asset(
-                            'assets/checkin.png',
-                            height: 45,
-                            width: 45,
-                            fit: BoxFit.cover,
-                            alignment: Alignment.center,
+                          },
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(height: 10.0),
+                              Image.asset(
+                                'assets/checkin.png',
+                                height: 45,
+                                width: 45,
+                                fit: BoxFit.cover,
+                                alignment: Alignment.center,
+                              ),
+                              SizedBox(height: 10.0),
+                              Text(
+                                "Check In",
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(height: 10.0),
-                          Text(
-                            "Check In",
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    decoration: BoxDecoration(
-                      color: Color.fromRGBO(247, 248, 250, checkinOp),
-                      //  borderRadius: BorderRadius.circular(30), //border corner radius
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5), //color of shadow
-                          spreadRadius: 5, //spread radius
-                          blurRadius: 7, // blur radius
-                          offset: Offset(0, 2), // changes position of shadow
-                          //first paramerter of offset is left-right
-                          //second parameter is top to down
                         ),
-                        //you can set more BoxShadow() here
-                      ],
-                    ),
-                  ),
+                        decoration: BoxDecoration(
+                          color: Color.fromRGBO(247, 248, 250, checkinOp),
+                          //  borderRadius: BorderRadius.circular(30), //border corner radius
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              //color of shadow
+                              spreadRadius: 5,
+                              //spread radius
+                              blurRadius: 7,
+                              // blur radius
+                              offset: Offset(0, 2), // changes position of shadow
+                              //first paramerter of offset is left-right
+                              //second parameter is top to down
+                            ),
+                            //you can set more BoxShadow() here
+                          ],
+                        ),
+                      ),
 
 
                       Container(
@@ -1153,17 +1165,14 @@ print(response.body);
                           hoverColor: Colors.white,
                           highlightColor: Colors.white,
                           onTap: () async {
-
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ViewActivity(
-                                      id: id,
+                                    builder: (context) =>
+                                        ViewActivity(
+                                          id: id,
 
-                                    )));
-
-
-
+                                        )));
                           },
                           child: Column(
                             children: <Widget>[
@@ -1192,9 +1201,12 @@ print(response.body);
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(0.5), //color of shadow
-                              spreadRadius: 5, //spread radius
-                              blurRadius: 7, // blur radius
+                              color: Colors.grey.withOpacity(0.5),
+                              //color of shadow
+                              spreadRadius: 5,
+                              //spread radius
+                              blurRadius: 7,
+                              // blur radius
                               offset: Offset(0, 2), // changes position of shadow
                               //first paramerter of offset is left-right
                               //second parameter is top to down
@@ -1203,10 +1215,6 @@ print(response.body);
                           ],
                         ),
                       ),
-
-
-
-
 
 
                       Container(
@@ -1219,17 +1227,14 @@ print(response.body);
                           hoverColor: Colors.white,
                           highlightColor: Colors.white,
                           onTap: () async {
-
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => AddActivity(
-                                      id: id,
+                                    builder: (context) =>
+                                        AddActivity(
+                                          id: id,
 
-                                    )));
-
-
-
+                                        )));
                           },
                           child: Column(
                             children: <Widget>[
@@ -1258,9 +1263,12 @@ print(response.body);
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(0.5), //color of shadow
-                              spreadRadius: 5, //spread radius
-                              blurRadius: 7, // blur radius
+                              color: Colors.grey.withOpacity(0.5),
+                              //color of shadow
+                              spreadRadius: 5,
+                              //spread radius
+                              blurRadius: 7,
+                              // blur radius
                               offset: Offset(0, 2), // changes position of shadow
                               //first paramerter of offset is left-right
                               //second parameter is top to down
@@ -1269,7 +1277,6 @@ print(response.body);
                           ],
                         ),
                       ),
-
 
 
                       Container(
@@ -1282,22 +1289,21 @@ print(response.body);
                           hoverColor: Colors.white,
                           highlightColor: Colors.white,
                           onTap: () async {
-if(getEditOpacity == 1) {
-  Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) =>
-              EditAgentList(
-                id: id,
-                email: email,
-                name: name,
-                status: checkTapcount,
-                lanlat: currentPostion,
-                zone: this.designation,
-                desgination: this.designation,
-              )));
-}
-
+                            if (getEditOpacity == 1) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          EditAgentList(
+                                            id: id,
+                                            email: email,
+                                            name: name,
+                                            status: checkTapcount,
+                                            lanlat: currentPostion,
+                                            zone: this.designation,
+                                            desgination: this.designation,
+                                          )));
+                            }
                           },
                           child: Column(
                             children: <Widget>[
@@ -1321,14 +1327,18 @@ if(getEditOpacity == 1) {
                           ),
                         ),
                         decoration: BoxDecoration(
-                          color: Color.fromRGBO(247, 248, 250, getEditOpacity == 0 ?0.3 :1),
+                          color: Color.fromRGBO(
+                              247, 248, 250, getEditOpacity == 0 ? 0.3 : 1),
                           //  borderRadius: BorderRadius.circular(30), //border corner radius
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(0.5), //color of shadow
-                              spreadRadius: 5, //spread radius
-                              blurRadius: 7, // blur radius
+                              color: Colors.grey.withOpacity(0.5),
+                              //color of shadow
+                              spreadRadius: 5,
+                              //spread radius
+                              blurRadius: 7,
+                              // blur radius
                               offset: Offset(0, 2), // changes position of shadow
                               //first paramerter of offset is left-right
                               //second parameter is top to down
@@ -1339,174 +1349,180 @@ if(getEditOpacity == 1) {
                       ),
 
 
-
-
                       Container(
-                    alignment: Alignment.center,
-                    margin: EdgeInsets.fromLTRB(140, 450, 10, 0),
-                    height: 100,
-                    width: 100,
-                    child: InkWell(
-                      overlayColor: MaterialStateProperty.all(Colors.white),
-                      focusColor: Colors.white,
-                      highlightColor: Colors.white,
-                      hoverColor: Colors.white,
-                      onTap: () async {
-                        if (checkTapcount == true) {
-                          await pr.show();
-                          _getUserLocation();
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.fromLTRB(140, 450, 10, 0),
+                        height: 100,
+                        width: 100,
+                        child: InkWell(
+                          overlayColor: MaterialStateProperty.all(Colors.white),
+                          focusColor: Colors.white,
+                          highlightColor: Colors.white,
+                          hoverColor: Colors.white,
+                          onTap: () async {
+                            if (checkTapcount == true) {
+                              await pr.show();
+                              _getUserLocation();
 
-                          _addMarker(
-                              LatLng(currentPostion.latitude, currentlongitude),
-                              "origin",
-                              BitmapDescriptor.defaultMarker);
+                              _addMarker(
+                                  LatLng(
+                                      currentPostion.latitude, currentlongitude),
+                                  "origin",
+                                  BitmapDescriptor.defaultMarker);
 
-                          if (checkTapcount == true) {
-                            SharedPreferences prefs =
+                              if (checkTapcount == true) {
+                                SharedPreferences prefs =
                                 await SharedPreferences.getInstance();
 
-                            prefs.setDouble("Opacity", 1);
+                                prefs.setDouble("Opacity", 1);
 
-                            prefs.setDouble("Opacity2", 0.3);
-                            prefs.setDouble("LocationLattitude", 0.0);
-                            prefs.setDouble("LocationLongitude", 0.0);
-                            prefs.setBool("CheckIn", false);
-                            prefs.setBool("ShouldDisplay", false);
+                                prefs.setDouble("Opacity2", 0.3);
+                                prefs.setDouble("LocationLattitude", 0.0);
+                                prefs.setDouble("LocationLongitude", 0.0);
+                                prefs.setBool("CheckIn", false);
+                                prefs.setBool("ShouldDisplay", false);
 
-                            BackgroundLocation.stopLocationService();
+                                BackgroundLocation.stopLocationService();
 
-                            checkOutOpacity = 0.3;
-                            checkinOp = 1;
-                            shouldDisplay = false;
+                                checkOutOpacity = 0.3;
+                                checkinOp = 1;
+                                shouldDisplay = false;
 
-                            /// destination marker
+                                /// destination marker
 
-                            checkTapcount = false;
-                            prefs.setBool("CheckIn", false);
+                                checkTapcount = false;
+                                prefs.setBool("CheckIn", false);
 
-                            checkOutOpacity = 0.3;
-                            prefs.setDouble("Opacity2", checkOutOpacity);
-                            getValues();
-                            onStop();
+                                checkOutOpacity = 0.3;
+                                prefs.setDouble("Opacity2", checkOutOpacity);
+                                getValues();
+                                onStop();
 
-                            CheckOutSubmit(latlng, newDate);
+                                CheckOutSubmit(latlng, newDate);
 
-                            //  removeData();
-                            latlng = [];
+                                //  removeData();
+                                latlng = [];
 
-                            if (pr.isShowing()) {
-                              await pr.hide();
+                                if (pr.isShowing()) {
+                                  await pr.hide();
+                                }
+                                // showGoogleMapDialog(context);
+                              }
                             }
-                            // showGoogleMapDialog(context);
-                          }
-                        }
-                      },
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(height: 10.0),
-                          Image.asset(
-                            'assets/checkout.png',
-                            height: 45,
-                            width: 45,
-                            fit: BoxFit.cover,
-                            alignment: Alignment.center,
+                          },
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(height: 10.0),
+                              Image.asset(
+                                'assets/checkout.png',
+                                height: 45,
+                                width: 45,
+                                fit: BoxFit.cover,
+                                alignment: Alignment.center,
+                              ),
+                              SizedBox(height: 10.0),
+                              Text(
+                                "Check Out",
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(height: 10.0),
-                          Text(
-                            "Check Out",
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    decoration: BoxDecoration(
-                      color: Color.fromRGBO(247, 248, 250, checkOutOpacity),
-                      //  borderRadius: BorderRadius.circular(30), //border corner radius
-                      shape: BoxShape.circle,
-
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5), //color of shadow
-                          spreadRadius: 5, //spread radius
-                          blurRadius: 7, // blur radius
-                          offset: Offset(0, 2), // changes position of shadow
-                          //first paramerter of offset is left-right
-                          //second parameter is top to down
                         ),
-                        //you can set more BoxShadow() here
-                      ],
-                    ),
-                  ),
-                  Container(
-                    alignment: Alignment.center,
-                    margin: EdgeInsets.fromLTRB(260, 450, 10, 0),
-                    height: 100,
-                    width: 100,
-                    child: InkWell(
-                      focusColor: Colors.white,
-                      highlightColor: Colors.white,
-                      hoverColor: Colors.white,
-                      overlayColor: MaterialStateProperty.all(Colors.white),
-                      onTap: () {
-                        if (checkTapcount == true) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => addDistributor(
-                                        id: id,
-                                        email: email,
-                                        name: name,
-                                        status: checkTapcount,
-                                        lanlat: currentPostion,
-                                        zone: this.designation,
-                                        desgination: this.designation,
-                                      )));
-                        }
-                      },
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(height: 10.0),
-                          Image.asset(
-                            'assets/customers.png',
-                            height: 40,
-                            width: 40,
-                            fit: BoxFit.cover,
-                            alignment: Alignment.center,
-                          ),
-                          SizedBox(height: 10.0),
-                          const Text(
-                            'Customer',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.grey,
+                        decoration: BoxDecoration(
+                          color: Color.fromRGBO(247, 248, 250, checkOutOpacity),
+                          //  borderRadius: BorderRadius.circular(30), //border corner radius
+                          shape: BoxShape.circle,
+
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              //color of shadow
+                              spreadRadius: 5,
+                              //spread radius
+                              blurRadius: 7,
+                              // blur radius
+                              offset: Offset(0, 2), // changes position of shadow
+                              //first paramerter of offset is left-right
+                              //second parameter is top to down
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    decoration: BoxDecoration(
-                      color: Color.fromRGBO(247, 248, 250, checkOutOpacity),
-                      //borderRadius: BorderRadius.circular(30), //border corner radius
-                      shape: BoxShape.circle,
-
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5), //color of shadow
-
-                          spreadRadius: 5, //spread radius
-                          blurRadius: 7, // blur radius
-                          offset: Offset(0, 2), // changes position of shadow
-                          //first paramerter of offset is left-right
-                          //second parameter is top to down
+                            //you can set more BoxShadow() here
+                          ],
                         ),
-                        //you can set more BoxShadow() here
-                      ],
-                    ),
-                  ),
-                ])),
+                      ),
+                      Container(
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.fromLTRB(260, 450, 10, 0),
+                        height: 100,
+                        width: 100,
+                        child: InkWell(
+                          focusColor: Colors.white,
+                          highlightColor: Colors.white,
+                          hoverColor: Colors.white,
+                          overlayColor: MaterialStateProperty.all(Colors.white),
+                          onTap: () {
+                            if (checkTapcount == true) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          addDistributor(
+                                            id: id,
+                                            email: email,
+                                            name: name,
+                                            status: checkTapcount,
+                                            lanlat: currentPostion,
+                                            zone: this.designation,
+                                            desgination: this.designation,
+                                          )));
+                            }
+                          },
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(height: 10.0),
+                              Image.asset(
+                                'assets/customers.png',
+                                height: 40,
+                                width: 40,
+                                fit: BoxFit.cover,
+                                alignment: Alignment.center,
+                              ),
+                              SizedBox(height: 10.0),
+                              const Text(
+                                'Customer',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Color.fromRGBO(247, 248, 250, checkOutOpacity),
+                          //borderRadius: BorderRadius.circular(30), //border corner radius
+                          shape: BoxShape.circle,
+
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              //color of shadow
+
+                              spreadRadius: 5,
+                              //spread radius
+                              blurRadius: 7,
+                              // blur radius
+                              offset: Offset(0, 2), // changes position of shadow
+                              //first paramerter of offset is left-right
+                              //second parameter is top to down
+                            ),
+                            //you can set more BoxShadow() here
+                          ],
+                        ),
+                      ),
+                    ])),
                 Container(
                   height: 380.0,
                   color: Colors.transparent,
@@ -1529,7 +1545,7 @@ if(getEditOpacity == 1) {
                                 children: [
                                   Container(
                                     margin:
-                                        EdgeInsets.fromLTRB(20, 100, 80, 40),
+                                    EdgeInsets.fromLTRB(20, 100, 80, 40),
                                     height: 120,
                                     width: 120,
                                     child: Container(
@@ -1674,7 +1690,7 @@ if(getEditOpacity == 1) {
                   right: 20.0,
                   child: AppBar(
                     title: const Text(
-                      'Al-Khair Gadoon',
+                      'Al-Khair Gadoon Ltd.',
                       textAlign: TextAlign.center,
                     ),
                     backgroundColor: Colors.transparent
@@ -1683,10 +1699,11 @@ if(getEditOpacity == 1) {
                         .withBlue(0),
                     elevation: 0,
                     leading: Builder(
-                      builder: (context) => IconButton(
-                        icon: Icon(Icons.menu),
-                        onPressed: () => Scaffold.of(context).openDrawer(),
-                      ),
+                      builder: (context) =>
+                          IconButton(
+                            icon: Icon(Icons.menu),
+                            onPressed: () => Scaffold.of(context).openDrawer(),
+                          ),
                     ),
                     primary: false,
                   ),
@@ -1694,7 +1711,10 @@ if(getEditOpacity == 1) {
               ]),
             ),
           );
-        },
+
+
+    },
+
       ),
     );
   }

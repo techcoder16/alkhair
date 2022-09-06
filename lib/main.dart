@@ -389,7 +389,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Alkhair',
+      title: 'Al-Khair Gadoon Ltd.',
       theme: ThemeData(
         fontFamily: 'Lato',
       ),

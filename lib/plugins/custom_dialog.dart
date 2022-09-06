@@ -21,6 +21,7 @@ List<String> _splitString(String value) {
 }
 
 
+
 Customdialog(BuildContext context,dynamic data, int index)
 {
 
@@ -40,7 +41,7 @@ Widget dialogContent(BuildContext context,dynamic data,int index) {
   List <String> stringAvatar= _splitString(
       data[index].avatar);
 
-print( data[0].avatar );
+print( _splitString(data[0].avatar)[0] );
 
   return Container(
     margin: EdgeInsets.only(left: 0.0,right: 0.0),
@@ -138,7 +139,7 @@ print( data[0].avatar );
                               CrossAxisAlignment
                                   .center,
                               children: const [
-                                Text('Shop Size',
+                                Text('City',
                                     style:
                                     TextStyle(
                                       color: Colors
@@ -197,11 +198,17 @@ print( data[0].avatar );
                               children: [
                                 Container(
                                   height: 70,
-                                  child: Image.network(
-                                      data[
-                                  index]
-                                      .avatar ),
-                                ),
+width: 70,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                   image: NetworkImage(
+
+                                       _splitString(data[index].avatar)[0] ),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  ),
+
                               ]),
                         ),
                         Container(
@@ -213,10 +220,14 @@ print( data[0].avatar );
                               crossAxisAlignment:
                               CrossAxisAlignment
                                   .center,
+
                               children: [
                                 Text(
+
                                     data[index]
                                         .city,
+                                    maxLines: 2,
+                                    textAlign: TextAlign.center,
                                     style:
                                     TextStyle(
                                       color: Colors
@@ -260,12 +271,17 @@ print( data[0].avatar );
                               CrossAxisAlignment
                                   .center,
                               children: const [
-                                Text(
+                                Flexible(child:Text(
                                     'Customer\nName',
+
+
+
+
                                     style:
                                     TextStyle(
                                       color: Colors
                                           .white,
+
                                       fontSize:
                                       15.0,
                                       backgroundColor:
@@ -275,7 +291,7 @@ print( data[0].avatar );
                                           171,
                                           1),
                                     )),
-                              ]),
+                                ),]),
                         ),
                         Container(
                           color: Color.fromRGBO(
@@ -346,14 +362,20 @@ print( data[0].avatar );
                               CrossAxisAlignment
                                   .center,
                               children: [
-                                Text(
+                                Flexible(child:Text(
                                    data[index]
                                         .name,
+                                    maxLines: 2,
+                                    textAlign: TextAlign.center,
+                                    
                                     style:
                                     TextStyle(
                                       fontSize:
                                       12.0,
                                     )),
+
+                                ),
+
                               ]),
                         ),
                         Container(
@@ -386,14 +408,18 @@ print( data[0].avatar );
                               CrossAxisAlignment
                                   .center,
                               children: [
-                                Text(
+                                Flexible(
+                                  child:Text(
                                    data[index]
                                         .email,
+                                    maxLines: 2,
+                                    textAlign: TextAlign.center,
                                     style:
                                     TextStyle(
                                       fontSize:
                                       12.0,
                                     )),
+                                )
                               ]),
                         ),
                       ]),
@@ -410,7 +436,7 @@ print( data[0].avatar );
                               CrossAxisAlignment
                                   .center,
                               children: const [
-                                Text('Remarks',
+                                Text('Contact\nNumber',
                                     style:
                                     TextStyle(
                                       color: Colors
@@ -499,7 +525,7 @@ print( data[0].avatar );
 
 
                                     data[index]
-                                        .shop_size,
+                                        .contact_no_1,
                                     maxLines: 3,
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.center,
@@ -714,6 +740,166 @@ print( data[0].avatar );
 
                       ]),
 
+
+
+
+                      TableRow(children: [
+                        Container(
+                          color: Color.fromRGBO(
+                              106, 136, 171, 1),
+                          height: 50,
+                          child: Column(
+                              mainAxisAlignment:
+                              MainAxisAlignment
+                                  .center,
+                              crossAxisAlignment:
+                              CrossAxisAlignment
+                                  .center,
+                              children: const [
+                                Text('Credit Limit',
+                                    style:
+                                    TextStyle(
+                                      color: Colors
+                                          .white,
+                                      fontSize:
+                                      15.0,
+                                      backgroundColor:
+                                      Color.fromRGBO(
+                                          106,
+                                          136,
+                                          171,
+                                          1),
+                                    )),
+                              ]),
+                        ),
+                        Container(
+                          color: Color.fromRGBO(
+                              106, 136, 171, 1),
+                          height: 50,
+                          child: Column(
+                              mainAxisAlignment:
+                              MainAxisAlignment
+                                  .center,
+                              crossAxisAlignment:
+                              CrossAxisAlignment
+                                  .center,
+                              children: const [
+                                Text('Own/Rent',
+                                    style:
+                                    TextStyle(
+                                      color: Colors
+                                          .white,
+                                      fontSize:
+                                      15.0,
+                                      backgroundColor:
+                                      Color.fromRGBO(
+                                          106,
+                                          136,
+                                          171,
+                                          1),
+                                    )),
+                              ]),
+                        ),
+                        Container(
+                          color: Color.fromRGBO(
+                              106, 136, 171, 1),
+                          height: 50,
+                          child: Column(
+                              mainAxisAlignment:
+                              MainAxisAlignment
+                                  .center,
+                              crossAxisAlignment:
+                              CrossAxisAlignment
+                                  .center,
+                              children: const [
+                                Text('Total Sale',
+                                    style:
+                                    TextStyle(
+                                      color: Colors
+                                          .white,
+                                      fontSize:
+                                      15.0,
+                                      backgroundColor:
+                                      Color.fromRGBO(
+                                          106,
+                                          136,
+                                          171,
+                                          1),
+                                    )),
+                              ]),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        SizedBox(
+                          height: 60,
+                          child: Row(
+                              mainAxisAlignment:
+                              MainAxisAlignment
+                                  .center,
+                              crossAxisAlignment:
+                              CrossAxisAlignment
+                                  .center,
+                              children: [
+                                Flexible(child:  Text(
+                                    data[index]
+                                        .credit_limit,
+                                    textAlign: TextAlign.center,
+                                    overflow: TextOverflow.ellipsis,
+
+                                    maxLines: 2,
+
+                                    style:
+                                    TextStyle(
+                                      fontSize:
+                                      12.0,
+                                    ))),
+                              ]),
+                        ),
+                        Container(
+                          height: 50,
+                          child: Row(
+                              mainAxisAlignment:
+                              MainAxisAlignment
+                                  .center,
+                              crossAxisAlignment:
+                              CrossAxisAlignment
+                                  .center,
+                              children: [
+                                Text(
+                                    data[index]
+                                        .owned,
+                                    style:
+                                    TextStyle(
+                                      fontSize:
+                                      12.0,
+                                    )),
+                              ]),
+                        ),
+                        Container(
+                          height: 50,
+                          child: Row(
+                              mainAxisAlignment:
+                              MainAxisAlignment
+                                  .center,
+                              crossAxisAlignment:
+                              CrossAxisAlignment
+                                  .center,
+                              children: [
+                                Flexible(child:Text(
+                                    data[index].total_sale,
+
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                    style:
+                                    TextStyle(
+                                      fontSize:
+                                      12.0,
+                                    )),),
+                              ]),
+                        ),
+
+                      ]),
 
                       /*   TableRow(children: [
                                                     Container(

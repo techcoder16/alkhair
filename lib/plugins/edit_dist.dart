@@ -87,7 +87,8 @@ class _agentEditListState extends State<EditAgentList> {
             widget.id.toString()));
 
     var jsonData = json.decode(response.body);
-
+print(response.body);
+print(response.statusCode);
     if (response.statusCode == 200) {
       for (var agentIterator in jsonData['data']) {
 
@@ -130,6 +131,9 @@ class _agentEditListState extends State<EditAgentList> {
           agentIterator["updated_at"].toString(),
           agentIterator["depth"].toString(),
           agentIterator["width"].toString(),
+
+
+
 
         );
 
@@ -269,7 +273,7 @@ class _agentEditListState extends State<EditAgentList> {
                                 onPressed: () =>
                                     _scaffoldKey.currentState?.openDrawer(),
                               ),
-                              title: Text('Al-Khair Gadoon'),
+                              title: Text('Al-Khair Gadoon Ltd.'),
                               actions: const <Widget>[],
                             ),
                             Container(
@@ -287,7 +291,7 @@ class _agentEditListState extends State<EditAgentList> {
                               ),
                             ),
                             Container(
-                              height: MediaQuery.of(context).size.height,
+                              height: MediaQuery.of(context).size.height+1000,
                               child: FutureBuilder(
                                 future: _getAgent(),
                                 initialData: [],
@@ -296,9 +300,9 @@ class _agentEditListState extends State<EditAgentList> {
                                   switch (snapshot.connectionState) {
                                     case ConnectionState.none:
                                     case ConnectionState.waiting:
-                                      return new Center(
+                                      return Center(
                                           child:
-                                              new CircularProgressIndicator());
+                                              CircularProgressIndicator());
 
                                     default:
                                       if (snapshot.hasError) {
@@ -461,7 +465,7 @@ class _agentEditListState extends State<EditAgentList> {
                                                     title: (Text(snapshot
                                                         .data[index].name)),
                                                     subtitle: (Text(snapshot
-                                                        .data[index].email)),
+                                                        .data[index].contact_no_1)),
                                                     selectedColor:
                                                         Color.fromRGBO(
                                                             55, 75, 167, 1),

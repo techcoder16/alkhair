@@ -37,14 +37,15 @@ class _agentListState extends State<AgentList> {
 
   getValues() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    statusNav = await preferences.getBool("CheckIn")!;
-    emailNav = await preferences.getString("email")!;
-    idNav = await preferences.getString("id")!;
-    nameNav = await preferences.getString("name")!;
-    loginNav = await preferences.getBool("isLogin")!;
-    timeNav = await preferences.getString("time")!;
-    zoneNav = await preferences.getString("zone")!;
-    designationNav = await preferences.getString("designation")!;
+
+    try{statusNav = await preferences.getBool("CheckIn")!;}catch(e)  {print(e);}
+    try{emailNav = await preferences.getString("email")!;}catch(e)  {print(e);}
+    try{idNav = await preferences.getString("id")!;}catch(e)  {print(e);}
+    try{nameNav = await preferences.getString("name")!;}catch(e)  {print(e);}
+    try{loginNav = await preferences.getBool("isLogin")!;}catch(e)  {print(e);}
+    try{timeNav = await preferences.getString("time")!;}catch(e)  {print(e);}
+    try{zoneNav = await preferences.getString("zone")!;}catch(e)  {print(e);}
+    try{designationNav = await preferences.getString("designation")!;   }catch(e)  {print(e);}
 
 
     //loadData(latlngNav);
@@ -69,7 +70,7 @@ class _agentListState extends State<AgentList> {
     List<Agent> agentsList = [];
     // pr.show();
     var response = await http.get(Uri.parse(
-        base_Url + "alkhair/public/api/v1/agent/getdistributors/" +
+        base_Url + "alkhair/public/api/v1/agent/getdistributorslist/" +
             widget.id.toString()));
 
 
@@ -87,7 +88,7 @@ class _agentListState extends State<AgentList> {
           agentIterator["name"].toString(),
           agentIterator["shop_name"].toString(),
           agentIterator["email"].toString(),
-          agentIterator["avatar"].toString(),
+            agentIterator["avatar"].toString(),
           agentIterator["shop_size"].toString(),
           agentIterator["floor"].toString(),
           agentIterator["owned"].toString(),
@@ -121,6 +122,9 @@ class _agentListState extends State<AgentList> {
         );
 
         agentsList.add(agent);
+        print(agent.avatar);
+
+
       }
 
 
@@ -265,7 +269,7 @@ class _agentListState extends State<AgentList> {
                                 onPressed: () =>
                                     _scaffoldKey.currentState?.openDrawer(),
                               ),
-                              title: Text('Al-Khair Gadoon'),
+                              title: Text('Al-Khair Gadoon Ltd.'),
                               actions: const <Widget>[],
                             ),
                             Container(
@@ -288,7 +292,7 @@ class _agentListState extends State<AgentList> {
                               height: MediaQuery
                                   .of(context)
                                   .size
-                                  .height*1.1,
+                                  .height*1000,
                               child: FutureBuilder(
                                 future: _getAgent(),
                                 initialData: [],
@@ -339,7 +343,7 @@ class _agentListState extends State<AgentList> {
                                               title: (Text(
                                                   snapshot.data[index].name)),
                                               subtitle: (Text(
-                                                  snapshot.data[index].email)),
+                                                  snapshot.data[index].contact_no_1)),
                                               selectedColor: Color.fromRGBO(
                                                   55, 75, 167, 1),
                                               selectedTileColor: Color.fromRGBO(
