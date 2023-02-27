@@ -47,6 +47,7 @@ bool permissionGranted =false;
     prefs.setDouble("LocationLongitude", position.longitude);
   }
 
+
   Future<bool> signIn(String email, pass) async {
 
 
@@ -70,7 +71,7 @@ bool permissionGranted =false;
 
     var response = await http.post(
         Uri.parse(
-            base_Url + "alkhair/public/api/v1/agent/login"),
+            base_Url + "api/v1/agent/login"),
         body: data);
 
     if (response.statusCode == 200) {

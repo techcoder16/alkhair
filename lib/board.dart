@@ -184,17 +184,17 @@ String endDay= "";
 
       var response = await http.post(
           Uri.parse(
-              base_Url + "alkhair/public/api/v1/agent/last-checkin-checkout"),
+              base_Url + "api/v1/agent/last-checkin-checkout"),
           body: data);
       if (response.statusCode == 200) {
 
         jsonResponse = json.decode(response.body);
-        print(jsonResponse["message"]['started_at']);
+
         start_day = jsonResponse["message"]['started_at'];
         endDay = jsonResponse["message"]['ended_at'];
-        print(start_day);
 
-print("start day");
+
+
         start_day ??= "";
 
         endDay ??= "";
@@ -226,10 +226,10 @@ print("start day");
 
 var now = new DateTime.now();
 var berlinWallFellDate = new DateTime.now();
-print(now);
+
 
 String formattedTime = DateFormat.Hms().format(now);
-print(formattedTime);
+
 
 
 zone = await preferences.getString("zone")!;
@@ -320,12 +320,12 @@ if (checkTapcount == true) {
 try {
   var response = await http.post(
       Uri.parse(
-          base_Url + "alkhair/public/api/v1/agent/check-status"),
+          base_Url + "api/v1/agent/check-status"),
       body: data);
 
   if (response.statusCode == 200) {
     jsonResponse = json.decode(response.body);
-    print(jsonResponse["message"]);
+
     if (jsonResponse["message"] == false) {
       SharedPreferences preferences =
       await SharedPreferences.getInstance();
@@ -366,9 +366,9 @@ catch(e)
 
       var response = await http.get(
         Uri.parse(
-            base_Url + "alkhair/public/api/v1/agent/dashboard/" + idNav),
+            base_Url + "api/v1/agent/dashboard/" + idNav),
       );
-print(response.body);
+
       if (response.statusCode == 200) {
         jsonResponse = json.decode(response.body);
 
@@ -413,6 +413,96 @@ print(response.body);
         return "";
     }
     return "";
+  }
+
+
+
+  Future<bool> CheckOutSubmitAuto(List<LatLng> latlng, String newDate) async {
+    onStop();
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    final _isRunning = await BackgroundLocator.isServiceRunning();
+
+    if (_isRunning == false) {}
+    double distanceInMeters = 0;
+
+    DateTime now = DateTime.now();
+    DateFormat formatter = DateFormat('yyyy-MM-dd');
+    final String formatted = formatter.format(now);
+
+    now = DateTime.now();
+    formatter = DateFormat('yyyy-MM-dd');
+
+    //  latlng = (await loadData())!;
+
+    try {
+      distanceInMeters = Geolocator.distanceBetween(
+          latlng[0].latitude,
+          latlng[0].longitude,
+          latlng[latlng.length - 1].latitude,
+          latlng[latlng.length - 1].longitude);
+    } catch (e) {
+      print(e);
+    }
+
+    // removeData();
+
+    var formattedDate1 = DateFormat.Hms().format(now);
+
+    var newDate1 =
+        formatter.format(now).toString() + " " + formattedDate1.toString();
+    CheckOutTime = newDate1;
+    Map<String, String> data = {
+      'agn_code': id,
+      'trip_id': checkInRequestModel.trip_id.toString(),
+      'distance': distanceInMeters.toString(),
+      'remarks': 'no remarks',
+      'ended_at': newDate1,
+      'end_coordinates': '0',
+      '_method': 'PATCH',
+      'coor': coordinates!
+    };
+
+    _getUserLocation();
+
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+    newDate = (await pref.getString("time"))!;
+   // await pref.setString("checkOutTime", newDate1);
+    CheckOutTime = newDate1;
+print("{" + newDate + "}");
+
+    if(newDate == "")
+      {
+        return true;
+
+      }
+
+    if(newDate1 == "")
+      {
+        return true;
+        
+      }
+  saveDataCheckOut(
+      id,
+      '0',
+      newDate.toString(),
+      newDate.toString(),
+      distanceInMeters.toString(),
+      "no remarks",
+      newDate1,
+      coordinates!,
+      coordinates!);
+
+
+    showAlertDialog(context, "Alert", "Check Out Successfully!!!");
+    prefs.setString("checkOutTime", "");
+    prefs.setString("time", "");
+newDate = "";
+
+
+    return true;
   }
 
   ///=============================================Punch Out =============
@@ -468,7 +558,6 @@ print(response.body);
     SharedPreferences pref = await SharedPreferences.getInstance();
 
     newDate = (await pref.getString("time"))!;
-
     await pref.setString("checkOutTime", newDate1);
     CheckOutTime = newDate1;
 
@@ -830,8 +919,94 @@ print(response.body);
 
   ///*============to location plugin carp======================================
 
+ void  checkInState() async
+ {
+   if(checkTapcount == true)
+     {
+
+      DateTime checkInDate = new DateFormat("yyyy-MM-dd").parse(newDate);
+
+      print(checkInDate);
+
+      var currentDate = DateTime.now();
+    var  formatterCurrentDate = DateFormat('yyyy-MM-dd');
+
+    var  formattedDateCurrent = DateFormat.Hms().format(
+        currentDate,
+      );
+
+     String currentDateTime = formatterCurrentDate.format(currentDate).toString() ;
+
+
+
+
+      DateTime checkOutDate = new DateFormat("yyyy-MM-dd").parse(currentDateTime);
+        print(checkOutDate);
+
+
+      var isSame = checkInDate.isAtSameMomentAs(checkOutDate);
+
+if(isSame==false)
+  {
+
+
+
+    _getUserLocation();
+
+
+
+    if (checkTapcount == true) {
+      SharedPreferences prefs =
+          await SharedPreferences.getInstance();
+
+      prefs.setDouble("Opacity", 1);
+
+      prefs.setDouble("Opacity2", 0.3);
+      prefs.setDouble("LocationLattitude", 0.0);
+      prefs.setDouble("LocationLongitude", 0.0);
+      prefs.setBool("CheckIn", false);
+      prefs.setBool("ShouldDisplay", false);
+
+      BackgroundLocation.stopLocationService();
+
+      checkOutOpacity = 0.3;
+      checkinOp = 1;
+      shouldDisplay = false;
+
+      /// destination marker
+
+      checkTapcount = false;
+      prefs.setBool("CheckIn", false);
+
+      checkOutOpacity = 0.3;
+      prefs.setDouble("Opacity2", checkOutOpacity);
+      getValues();
+      onStop();
+
+      CheckOutSubmitAuto(latlng, newDate);
+
+
+      latlng = [];
+
+
+
+
+
+
+      // showGoogleMapDialog(context);
+    }
+    newDate = "";
+    checkoutDate = "";
+
+  }
+
+     }
+
+  }
   @override
   void initState() {
+    var timer = Timer.periodic(Duration(seconds: 7), (Timer t) => checkInState());
+
 
     initConnectivity();
 
@@ -1084,10 +1259,7 @@ print(response.body);
 
                               sharedPreferences.setBool("CheckIn", true);
 
-                              if (start_day == "") {
-                                start_day = newDate;
-                                sharedPreferences.setString("startDay", newDate);
-                              }
+
 
                               if (await pr.isShowing()) {
                                 try {
@@ -1400,7 +1572,6 @@ print(response.body);
 
                                 CheckOutSubmit(latlng, newDate);
 
-                                //  removeData();
                                 latlng = [];
 
                                 if (pr.isShowing()) {

@@ -69,7 +69,7 @@ class _agentEditListState extends State<EditAgentList> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   String assertiveURL =
-      base_Url + "alkhair/storage/app/public/images/distributors/";
+      base_Url + "storage/images/distributors/";
 
   String _splitString(String value) {
     var arrayOfString = value.split(',');
@@ -83,12 +83,11 @@ class _agentEditListState extends State<EditAgentList> {
     List<Agent> agentsList = [];
     // pr.show();
     var response = await http.get(Uri.parse(
-        base_Url + "alkhair/public/api/v1/agent/getdistributors/" +
+        base_Url + "api/v1/agent/getdistributors/" +
             widget.id.toString()));
 
     var jsonData = json.decode(response.body);
-print(response.body);
-print(response.statusCode);
+
     if (response.statusCode == 200) {
       for (var agentIterator in jsonData['data']) {
 
@@ -129,8 +128,9 @@ print(response.statusCode);
           agentIterator["added_by"].toString(),
           agentIterator["created_at"].toString(),
           agentIterator["updated_at"].toString(),
-          agentIterator["depth"].toString(),
           agentIterator["width"].toString(),
+          agentIterator["depth"].toString(),
+
 
 
 
@@ -333,6 +333,9 @@ print(response.statusCode);
                                                       ),
                                                     ),
                                                     onTap: () {
+
+
+
                                                       Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
@@ -452,14 +455,14 @@ print(response.statusCode);
                                                                         .data[
                                                                             index]
                                                                         .avatar,
-                                                                    width: snapshot
-                                                                        .data[
-                                                                            index]
-                                                                        .width,
                                                                     depth: snapshot
                                                                         .data[
                                                                             index]
                                                                         .depth,
+                                                                    width: snapshot
+                                                                        .data[
+                                                                            index]
+                                                                        .width,
                                                                   )));
                                                     },
                                                     title: (Text(snapshot

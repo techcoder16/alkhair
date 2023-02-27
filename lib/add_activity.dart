@@ -134,15 +134,21 @@ List<String> dN = [];
 
       var response = await http.get(
         Uri.parse(
-            base_Url + "alkhair/public/api/v1/agent/getdistributors/" + idNav),
+            base_Url + "api/v1/agent/getdistributors/" + idNav),
       );
 
       if (response.statusCode == 200) {
         jsonResponse = json.decode(response.body);
 
         jsonResponse['data'].forEach((item) {
-          listDist.add(item['name']);
+          listDist.add(item['name']+" " + item['shop_name']);
+
+
+
+
           listDistCode.add(item['dst_code']);
+          listDistCode.add(item['shop_name']);
+
         });
 
         listDist = listDist.toSet().toList();
@@ -165,7 +171,7 @@ List<String> dN = [];
     try {
       response = await http.post(
           Uri.parse(
-              "http://alkhair.hameedsweets.com/alkhair/public/api/v1/agent/check-remark"),
+              "http://alkhair.nashwagroup.com/api/v1/agent/check-remark"),
           headers: {'Content-type': 'application/json'},
           body: json.encode(data));
     } catch (e) {
@@ -243,7 +249,7 @@ List<String> dN = [];
     var jsonResponse = null;
 
     var response = await http.post(
-        Uri.parse(base_Url + "alkhair/public/api/v1/agent/check-attendance"),
+        Uri.parse(base_Url + "api/v1/agent/check-attendance"),
         body: data);
 
     String value = "";
@@ -300,7 +306,7 @@ try {designationNav = preferences.getString("designation")!;      }catch(e){}
     var response = await http.post(
         Uri.parse(
 
-            base_Url + "alkhair/public/api/v1/agent/daily-remarks/destroy"),
+            base_Url + "api/v1/agent/daily-remarks/destroy"),
         headers: { 'Content-type': 'application/json',
           'Accept': 'application/json'},
         body: json.encode(data));
@@ -396,7 +402,7 @@ print(json.encode(data));
     var response = await http.post(
         Uri.parse(
 
-            "http://alkhair.hameedsweets.com/alkhair/public/api/v1/agent/daily-remarks-activity"),
+            "http://alkhair.nashwagroup.com/api/v1/agent/daily-remarks-activity"),
         headers: { 'Content-type': 'application/json',
           'Accept': 'application/json'},
         body: json.encode(data));
@@ -593,7 +599,7 @@ setState(() {
                           children: <Widget>[
                             Container(
                               padding:
-                                  EdgeInsets.fromLTRB(50.0, 30.0, 0.0, 0.0),
+                                  EdgeInsets.fromLTRB(20.0, 30.0, 0.0, 0.0),
                               child: Text('Add Activity',
                                   style: TextStyle(
                                       fontSize: 30.0,
@@ -604,7 +610,7 @@ setState(() {
                       ),
                       const SizedBox(height: 60.0),
                       Container(
-                        padding: const EdgeInsets.fromLTRB(50, 20, 50, 20),
+                        padding: const EdgeInsets.fromLTRB(30, 20, 20, 20),
                         child: Row(
                           children: <Widget>[
                             Container(
@@ -674,7 +680,7 @@ setState(() {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.fromLTRB(50, 20, 50, 20),
+                        padding: const EdgeInsets.fromLTRB(30, 20, 20, 20),
                         child: DropdownSearch<String>.multiSelection(
                           mode: Mode.DIALOG,
                           showSearchBox: true,

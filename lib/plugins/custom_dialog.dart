@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 
 String assertiveURL =
-    base_Url  + "alkhair/storage/app/public/images/distributors/";
+    base_Url  + "storage/images/distributors/";
 
 List<String> _splitString(String value) {
   var arrayOfString = value.split(',');

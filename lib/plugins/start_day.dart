@@ -125,7 +125,7 @@ Future<void> startDay(String id,BuildContext context) async {
 
   var response = await http.post(
       Uri.parse(
-          base_Url + "alkhair/public/api/v1/agent/dayIn"),
+          base_Url + "api/v1/agent/dayIn"),
       body: data);
 
   if (response.statusCode == 200) {

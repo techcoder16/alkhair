@@ -1,1 +1,1 @@
-var base_Url = "http://alkhair.hameedsweets.com/";
+var base_Url = "http://alkhair.nashwagroup.com/";

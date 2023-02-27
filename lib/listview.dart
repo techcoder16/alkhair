@@ -189,7 +189,7 @@ class NavBar extends StatelessWidget {
 
         */
 
-          ListTile(
+         /* ListTile(
             title: Text('Logout'),
             leading: Icon(Icons.exit_to_app),
             onTap: () async {
@@ -213,6 +213,7 @@ class NavBar extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => LoginPage()));
             },
           ),
+        */
         ],
       ),
     );

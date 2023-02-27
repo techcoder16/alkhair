@@ -55,7 +55,7 @@ class _agentListState extends State<AgentList> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   String assertiveURL =
-      base_Url + "alkhair/storage/app/public/images/distributors/";
+      base_Url + "storage/images/distributors/";
 
 
   String _splitString(String value) {
@@ -70,7 +70,7 @@ class _agentListState extends State<AgentList> {
     List<Agent> agentsList = [];
     // pr.show();
     var response = await http.get(Uri.parse(
-        base_Url + "alkhair/public/api/v1/agent/getdistributorslist/" +
+        base_Url + "api/v1/agent/getdistributorslist/" +
             widget.id.toString()));
 
 

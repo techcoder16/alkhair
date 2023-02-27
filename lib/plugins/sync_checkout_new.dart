@@ -13,6 +13,7 @@ import 'package:http/http.dart' as http;
 import 'package:progress_dialog_null_safe/progress_dialog_null_safe.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../board.dart';
 import '../listview.dart';
 
 import '../model/checkout_model.dart';
@@ -127,7 +128,7 @@ class _syncCheckOutNewState extends State<SyncCheckOutNew> {
 
           var response = await http.post(
               Uri.parse(
-                  base_Url + "alkhair/public/api/v1/agent/trips"),
+                  base_Url + "api/v1/agent/trips"),
               body: d1);
           print(d1);
           print(response.statusCode );
@@ -210,7 +211,7 @@ class _syncCheckOutNewState extends State<SyncCheckOutNew> {
         http.MultipartRequest request = http.MultipartRequest(
             "POST",
             Uri.parse(
-                base_Url + "alkhair/public/api/v1/agent/distributor"));
+                base_Url + "api/v1/agent/distributor"));
 
 
         Map<String, String> headers = {"Content-Type": "application/json"};
@@ -364,7 +365,7 @@ class _syncCheckOutNewState extends State<SyncCheckOutNew> {
 
 
   String assertiveURL =
-      "http://alkhair.rextech.pk/alkhair/storage/app/public/images/distributors/";
+      "http://alkhair.nashwagroup.com/alkhair/storage/app/public/images/distributors/";
 
 
   String _splitString(String value) {
@@ -420,7 +421,7 @@ class _syncCheckOutNewState extends State<SyncCheckOutNew> {
 
     //Optional
     pr.style(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       message: 'Please wait...',
       borderRadius: 3.0,
       backgroundColor: Colors.white,
@@ -732,8 +733,6 @@ class _syncCheckOutNewState extends State<SyncCheckOutNew> {
 
 
                                                           //  showAlertDialog(context, "Alert", "Successfully Synced");
-
-
 
 
 

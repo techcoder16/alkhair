@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:progress_dialog_null_safe/progress_dialog_null_safe.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../board.dart';
 import '../listview.dart';
 
 import '../model/checkout_model.dart';
@@ -106,6 +107,7 @@ class _syncCheckOutState extends State<SyncCheckOut> {
 
         var data = dataCheckOut.toJson();
 
+
         Map<String, String> d1 = {
           'agn_code': element.agn_code,
           // "start_coordinates": element.start_coordinates,
@@ -118,9 +120,11 @@ class _syncCheckOutState extends State<SyncCheckOut> {
           'coor': element.end_coordinates
         };
 
+
+
         try {
           var response = await http.post(
-              Uri.parse(base_Url + "alkhair/public/api/v1/agent/trips"),
+              Uri.parse(base_Url + "api/v1/agent/trips"),
               body: d1);
 
           print(response.statusCode);
@@ -192,26 +196,33 @@ class _syncCheckOutState extends State<SyncCheckOut> {
     initConnectivity();
 
     if (finalcheck.isNotEmpty) {
-      finalcheck.forEach((element) async {
+      print(finalcheck);
+
+      var i=0;
+      for (var element in finalcheck) {
+i=i+1;
+
+
+
         var dataDist = element as Dist;
 
         var data = dataDist.toJson();
 
         http.MultipartRequest request = http.MultipartRequest("POST",
-            Uri.parse(base_Url + "alkhair/public/api/v1/agent/distributor"));
+            Uri.parse(base_Url + "api/v1/agent/distributor"));
 
-        Map<String, String> headers = {"Content-Type": "application/json"};
+        Map<String, String> headers = {"Content-Type": "multipart/form-data"};
 
         request.files.add(await http.MultipartFile.fromBytes(
             'avatar[]', dataFromBase64String(element.fileOne),
-            filename: "image"));
+            filename: "image"+i.toString()));
         request.files.add(await http.MultipartFile.fromBytes(
             'avatar[]', dataFromBase64String(element.fileTwo),
-            filename: "image_2"));
+            filename: "image_2"+i.toString()));
 
         request.files.add(await http.MultipartFile.fromBytes(
             'avatar[]', dataFromBase64String(element.fileThree),
-            filename: "image_3"));
+            filename: "image_3"+i.toString()));
         element.working_with_us == null ? "" : element.working_with_us;
 
         Map<String, String> d1 = {
@@ -250,13 +261,24 @@ class _syncCheckOutState extends State<SyncCheckOut> {
 
         //  pr.show();
 
-        http.StreamedResponse response = await request.send();
+
 
         try {
-          final respStr = await response.stream.bytesToString();
-
+          http.StreamedResponse response = await request.send();
           if (response.statusCode == 200) {
+
+            var responseData = await response.stream.toBytes();
+            var responseToString = String.fromCharCodes(responseData);
+            var jsonBody = jsonDecode(responseToString);
+            setState(() {
+              print(jsonBody);
+            });
+
             // success
+            print("success");
+
+            final respStr = await response.stream.bytesToString();
+
 
             k++;
 
@@ -266,16 +288,18 @@ class _syncCheckOutState extends State<SyncCheckOut> {
 
             valueForSync = decodedMap["error"] == "true" ? true : false;
             msgForSync = decodedMap['message'];
+
           }
         } catch (e) {}
-      });
+
+      }
       if (pr.isShowing()) {
         pr.hide();
       }
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       initConnectivity();
-      print(checkInternet);
+
 
       if (checkInternet == true) {
         if (valueForSync == false) {
@@ -548,19 +572,28 @@ class _syncCheckOutState extends State<SyncCheckOut> {
                                                         elevation: 7.0,
                                                         child: InkWell(
                                                           onTap: () async {
+
                                                             if (finaldist
                                                                     .isEmpty &&
                                                                 finalcheck
                                                                     .isEmpty) {
                                                             } else {
+
                                                               submitDist();
 
                                                               submitCheckOut();
+
+                                                              Navigator.push(
+                                                                  context, MaterialPageRoute(builder: (context) => BoardView()));
+
+
+
+
                                                             }
                                                           },
                                                           child: const Center(
                                                             child: Text(
-                                                              'SUBMIT SYNC DATA',
+                                                              'SUBMIT SYNC DATA NEW',
                                                               style: TextStyle(
                                                                   color: Colors
                                                                       .white,
@@ -679,14 +712,20 @@ class _syncCheckOutState extends State<SyncCheckOut> {
                                                           child: InkWell(
                                                             onTap: () async {
                                                               await pr.show();
+
                                                               if (finaldist
                                                                       .isEmpty &&
                                                                   finalcheck
                                                                       .isEmpty) {
                                                               } else {
+
                                                                 submitDist();
 
                                                                 submitCheckOut();
+                                                                Navigator.push(context, MaterialPageRoute(builder: (context) => BoardView()));
+
+
+
                                                               }
                                                               try {
                                                                 //  showAlertDialog(context,"Alert", "Successfully Synced");
@@ -701,6 +740,7 @@ class _syncCheckOutState extends State<SyncCheckOut> {
                                                                     () {});
 
                                                                 await pr.hide();
+                                                                Navigator.push(context, MaterialPageRoute(builder: (context) => BoardView()));
 
                                                               }
                                                             },

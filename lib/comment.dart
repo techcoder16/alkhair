@@ -125,7 +125,7 @@ class _CommentScreenState extends State<CommentPage> {
 
     // pr.show();
     var response = await http.get(Uri.parse(
-        base_Url + "alkhair/public/api/v1/agent/getdistributors/" +
+        base_Url + "api/v1/agent/getdistributors/" +
             id));
 
     var jsonData = json.decode(response.body);
@@ -316,7 +316,7 @@ class _CommentScreenState extends State<CommentPage> {
 
     var response = await http.post(
         Uri.parse(
-            base_Url + "alkhair/public/api/v1/agent/daily-remarks"),
+            base_Url + "api/v1/agent/daily-remarks"),
         body: data);
 
     if (response.statusCode == 200) {

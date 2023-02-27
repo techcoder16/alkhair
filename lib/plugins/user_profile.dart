@@ -113,7 +113,7 @@ async {
       var response = await http.post(
 
         Uri.parse(
-            base_Url + "alkhair/public/api/v1/agent/get-agent"),
+            base_Url + "api/v1/agent/get-agent"),
 
           headers: {'Content-type': 'application/json'},
 body: json.encode(data)
@@ -162,7 +162,7 @@ return true;
     pr.show();
     var response = await http.post(
         Uri.parse(
-            base_Url + "alkhair/public/api/v1/agent/agents/" +
+            base_Url + "api/v1/agent/agents/" +
                 idNav),
         body: data);
 print(response.body);

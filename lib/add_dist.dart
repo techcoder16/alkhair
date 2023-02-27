@@ -90,6 +90,7 @@ class _addDistributorState extends State<addDistributor> {
   late bool v2 = false;
   late bool v3 = false;
   late bool v4 = false;
+   late  LatLng currentPostion=LatLng(0,0);
 
   late int value_type = 0;
   final TextEditingController _distributorCompaniesController =
@@ -217,7 +218,14 @@ class _addDistributorState extends State<addDistributor> {
       pr.hide();
     });
   }
+  Future<void> _getUserLocation() async {
+    var position = await GeolocatorPlatform.instance.getCurrentPosition();
 
+    setState(() {
+      currentPostion = LatLng(position.latitude, position.longitude);
+
+    });
+  }
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   Future<bool> submit(
@@ -336,8 +344,8 @@ class _addDistributorState extends State<addDistributor> {
         img64FileOne,
         img64FileTwo,
         img64FileThree,
-        width,
-        depth);
+      depth, width
+        );
 
 
 //loadDataDistributor();
@@ -471,6 +479,8 @@ class _addDistributorState extends State<addDistributor> {
 
   @override
   void initState() {
+    _getUserLocation();
+
     port.listen(
       (dynamic data) async {
         await updateUI(data);
@@ -945,9 +955,9 @@ class _addDistributorState extends State<addDistributor> {
           color: Colors.grey),
     );
 
-    _distributorCoordinatesController.text = widget.lanlat.latitude.toString() +
+    _distributorCoordinatesController.text = currentPostion.latitude.toString() +
         "," +
-        widget.lanlat.longitude.toString();
+        currentPostion.longitude.toString();
 
     return FutureBuilder(
         future: Future.wait([getValues()]),
@@ -1417,6 +1427,7 @@ class _addDistributorState extends State<addDistributor> {
                                   value: v3,
                                   onChanged: (bool? value) {
                                     setState(() {
+
                                       ownedCheck = true;
 
                                       v3 = true;
@@ -1455,6 +1466,7 @@ class _addDistributorState extends State<addDistributor> {
                                           color:
                                               Color.fromRGBO(55, 75, 167, 1)))),
                               keyboardType: TextInputType.number,
+
                             ),
                             SizedBox(height: 10.0),
                             Row(
@@ -1659,24 +1671,55 @@ class _addDistributorState extends State<addDistributor> {
 
                             ),
 
+
                             const SizedBox(height: 20.0),
-                            Visibility(
-                              visible: false,
-                              child: TextField(
-                                controller: _distributorCoordinatesController,
-                                decoration: InputDecoration(
-                                    labelText: 'Coordinates',
-                                    labelStyle: TextStyle(
-                                        fontFamily: 'Raleway',
-                                        fontWeight: FontWeight.normal,
-                                        color: Colors.grey),
-                                    icon: Icon(Icons.add_location_alt_sharp),
-                                    focusedBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Color.fromRGBO(
-                                                55, 75, 167, 1)))),
-                              ),
-                            ),
+
+                              Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                SizedBox(width: 0.0),
+                                Expanded(child:
+
+                                      TextField
+                                    (
+                                      controller: _distributorCoordinatesController,
+                                      decoration: InputDecoration(
+
+                                      labelText: 'Current Coordinates',
+                                      labelStyle: TextStyle(
+                                      fontFamily: 'Raleway',
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.grey),
+                                      icon: Icon(Icons.add_location_rounded ),
+
+                                      focusedBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Color.fromRGBO(
+                                                  55, 75, 167, 1)))),
+                                ),
+
+
+              ),
+
+                                Expanded(
+
+                                child:  IconButton(
+                                    icon: const Icon(Icons.add_location_alt_sharp),
+                                    color: Colors.grey,
+
+                                    onPressed: () {
+
+                                      _getUserLocation();
+
+                                    }
+                                    ,
+                                  ),
+
+                                ),
+             ], ),
+
+
+
                             SizedBox(height: 20.0),
 
                             SizedBox(
@@ -1691,6 +1734,8 @@ class _addDistributorState extends State<addDistributor> {
 
                                   onTap: ()
                                   {
+                                    _getUserLocation();
+
                                   if(!isTapped){
 
 

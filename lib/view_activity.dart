@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:progress_dialog_null_safe/progress_dialog_null_safe.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'listview.dart';
+import 'model/agentActivityBasic_model.dart';
 import 'model/agentActivity_model.dart';
 
 import 'model/agent_model.dart';
@@ -54,21 +56,15 @@ class _viewActivityState extends State<ViewActivity> {
 
     try {
       var response = await http.post(
-          Uri.parse(
-
-              base_Url + "alkhair/public/api/v1/agent/last-checkin-checkout"),
-
+          Uri.parse(base_Url + "api/v1/agent/last-checkin-checkout"),
           body: data);
       print(response.body);
       if (response.statusCode == 200) {
         jsonResponse = json.decode(response.body);
         print(jsonResponse["message"]['started_at']);
-        start_day = jsonResponse["message"]['started_at'];
-        endDay = jsonResponse["message"]['ended_at'];
+        //   start_day = jsonResponse["message"]['started_at'];
+        //  endDay = jsonResponse["message"]['ended_at'];
 
-        start_day ??= "";
-
-        endDay ??= "";
       }
     } catch (e) {
       print(e);
@@ -101,39 +97,74 @@ class _viewActivityState extends State<ViewActivity> {
 
     return arrayOfString.first;
   }
+  Future<AgentActivityBasic> _getActivityBasic(String date) async {
+var response ;
+
+Map data = {'date': date, 'agn_code': widget.id};
+
+
+
+    try {
+      response = await http.post(
+          Uri.parse(base_Url + "api/v1/agent/get-attendance-details"),
+          body: data);
+    } catch (e) {
+      print(date);
+    }
+
+    var jsonata = json.decode(response.body);
+
+    getDistance = jsonata['attendance']['total_distance'];
+    start_day = jsonata["attendance"]['started_at'];
+    endDay = jsonata["attendance"]['ended_at'];
+
+
+    AgentActivityBasic agentActivityBasic = AgentActivityBasic(start_day,endDay,getDistance);
+
+
+
+
+    return agentActivityBasic;
+
+
+
+  }
+
 
   Future<List<AgentActivity>> _getActivity(String date) async {
     List<AgentActivity> viewList = [];
-    // pr.show();
+
+    if (date.isEmpty) {
+      final now = new DateTime.now();
+      date = DateFormat('yMd').format(now); // 28/03/2020
+
+    }
 
     Map data = {'date': date, 'agn_code': widget.id};
-var response;
+    var response;
 
     try {
-       response = await http.post(
-
-          Uri.parse(
-              base_Url + "alkhair/public/api/v1/agent/daily-remarks-index"),
-
-
+      response = await http.post(
+          Uri.parse(base_Url + "api/v1/agent/daily-remarks-index"),
           body: data);
+    } catch (e) {
+      print(date);
     }
-    catch(e)
-    {
-      print(e);
-    }
-print(data);
 
     var jsonData = json.decode(response.body);
     try {
       getDistance = jsonData['attendance']['total_distance'];
-    }
-    catch(e)
-    {
+      start_day = jsonData["attendance"]['started_at'];
+      endDay = jsonData["attendance"]['ended_at'];
+    } catch (e) {
+      getDistance = '0';
+      start_day = '';
+      endDay = '';
+
       print(e);
     }
     print(response.body);
-    print("furqan");
+
     if (response.statusCode == 200) {
       for (var viewActivityIterator in jsonData['activties']) {
         AgentActivity agentActivity = AgentActivity(
@@ -162,6 +193,23 @@ print(data);
         print(agentActivity.covered_sale);
         viewList.add(agentActivity);
       }
+
+      try {
+        response = await http.post(
+            Uri.parse(base_Url + "api/v1/agent/get-attendance-details"),
+            body: data);
+      } catch (e) {
+        print(date);
+      }
+
+      var jsonata = json.decode(response.body);
+
+      getDistance = jsonata['attendance']['total_distance'];
+      start_day = jsonata["attendance"]['started_at'];
+      endDay = jsonata["attendance"]['ended_at'];
+
+      print("get distance");
+      print(getDistance);
 
       if (pr.isShowing()) {
         pr.hide();
@@ -203,6 +251,8 @@ print(data);
           fontWeight: FontWeight.normal,
           color: Colors.grey),
     );
+
+
 
     return FutureBuilder(
         future: Future.wait([getValues(), getStartEndDay()]),
@@ -292,7 +342,7 @@ print(data);
                                 child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                    CrossAxisAlignment.center,
                                     children: const [
                                       Text('Start Day',
                                           style: TextStyle(
@@ -303,20 +353,55 @@ print(data);
                                           )),
                                     ]),
                               ),
-                              Container(
-                                height: 50,
-                                child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(start_day.toString(),
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 14.0,
-                                          )),
-                                    ]),
-                              ),
+
+                              FutureBuilder(
+
+    future: _getActivityBasic(_userDateController.text),
+    initialData: [],
+    builder: (BuildContext context,
+    AsyncSnapshot snapshot) {
+      switch (snapshot.connectionState) {
+        case ConnectionState.none:
+        case ConnectionState.waiting:
+          return Center(
+            child: Text(""),);
+        default:
+          if (snapshot.hasError) {
+            return Center(child: Text(''));
+          } else {
+            return snapshot.data == null
+                ? SizedBox(
+              height: 200,
+            )
+                :
+
+            Container(
+              height: 50,
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment:
+                  CrossAxisAlignment.center,
+                  children: [
+
+                    Text(  snapshot
+                  .data
+                  .startDay,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14.0,
+                        )),
+                  ]),
+            );
+
+
+          }
+      }
+    }
+    ),
+
+
+
+
                             ]),
                             TableRow(children: [
                               Container(
@@ -367,43 +452,107 @@ print(data);
                                           )),
                                     ]),
                               ),
-                              Container(
-                                height: 50,
-                                child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(endDay.toString(),
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 14.0,
-                                          )),
-                                    ]),
+                              FutureBuilder(
+
+                                  future: _getActivityBasic(_userDateController.text),
+                                  initialData: [],
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot snapshot) {
+                                    switch (snapshot.connectionState) {
+                                      case ConnectionState.none:
+                                      case ConnectionState.waiting:
+                                        return Center(
+                                          child: Text(""),);
+                                      default:
+                                        if (snapshot.hasError) {
+                                          return Center(child: Text(''));
+                                        } else {
+                                          return snapshot.data == null
+                                              ? SizedBox(
+                                            height: 200,
+                                          )
+                                              :
+
+                                          Container(
+                                            height: 50,
+                                            child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                                children: [
+
+                                                  Text(  snapshot
+                                                      .data
+                                                      .endDay,
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontSize: 14.0,
+                                                      )),
+                                                ]),
+                                          );
+
+
+                                        }
+                                    }
+                                  }
                               ),
+
+
                             ]),
                           ],
                         ),
                       ),
-                      Container(
-                        margin: EdgeInsets.all(20),
-                        height: 50,
-                        width: 200,
-                        color: Color.fromRGBO(106, 136, 171, 1),
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text("Distance in kms: " + getDistance.toString(),
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15.0,
-                                    backgroundColor:
-                                        Color.fromRGBO(106, 136, 171, 1),
-                                  )),
-                            ]),
+
+
+
+                      FutureBuilder(
+
+                          future: _getActivityBasic(_userDateController.text),
+                          initialData: [],
+                          builder: (BuildContext context,
+                              AsyncSnapshot snapshot) {
+                            switch (snapshot.connectionState) {
+                              case ConnectionState.none:
+                              case ConnectionState.waiting:
+                                return Center(
+                                  child: Text(""), );
+                              default:
+                                if (snapshot.hasError) {
+                                  return Center(child: Text(''));
+                                } else {
+                                  return snapshot.data == null
+                                      ? SizedBox(
+                                    height: 200,
+                                  )
+                                      :
+
+                                  Container(
+                                    margin: EdgeInsets.all(20),
+                                    height: 50,
+                                    width: 200,
+                                    color: Color.fromRGBO(106, 136, 171, 1),
+                                    child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Text("Distance in kms: " + snapshot.data.getDistance.toString(),
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 15.0,
+                                                backgroundColor:
+                                                Color.fromRGBO(106, 136, 171, 1),
+                                              )),
+                                        ]),
+                                  );
+
+                                }
+                            }
+                          }
                       ),
+
+
+
                       Container(
                           padding: const EdgeInsets.all(50),
                           child: Row(
@@ -458,13 +607,121 @@ print(data);
                                           borderSide: BorderSide(
                                               color: Color.fromRGBO(
                                                   223, 28, 0, 1)))),
-                                  onChanged: (value) {
-                                    _getActivity(value);
+                                  onSubmitted: (value)
+                                  {
+
+
+                                    setState(() async {
+                                      await _getActivity(value);
+                                      await getValues();
+
+                                      try {
+                                        Map data = {
+                                          'date': _userDateController.text,
+                                          'agn_code': widget.id
+                                        };
+
+                                        var response = await http.post(
+                                            Uri.parse(base_Url +
+                                                "api/v1/agent/get-attendance-details"),
+                                            body: data);
+
+                                        var jsonata =
+                                        json.decode(response.body);
+
+                                        getDistance = jsonata['attendance']
+                                        ['total_distance'];
+                                        start_day = jsonata["attendance"]
+                                        ['started_at'];
+                                        endDay =
+                                        jsonata["attendance"]['ended_at'];
+                                      } catch (e) {
+                                        print(e);
+                                      }
+
+
+                                    });
+
+
+
+
+                                  },
+                                  onEditingComplete: ()
+                                  {
+
+                                    setState(() async {
+                                      await _getActivity(_userDateController.text);
+                                      await getValues();
+
+                                      try {
+                                        Map data = {
+                                          'date': _userDateController.text,
+                                          'agn_code': widget.id
+                                        };
+
+                                        var response = await http.post(
+                                            Uri.parse(base_Url +
+                                                "api/v1/agent/get-attendance-details"),
+                                            body: data);
+
+                                        var jsonata =
+                                        json.decode(response.body);
+
+                                        getDistance = jsonata['attendance']
+                                        ['total_distance'];
+                                        start_day = jsonata["attendance"]
+                                        ['started_at'];
+                                        endDay =
+                                        jsonata["attendance"]['ended_at'];
+                                      } catch (e) {
+                                        print(e);
+                                      }
+
+
+                                    });
+
+                                  },
+                                  onChanged: (value) async {
+
+                                      setState(() async {
+                                        await _getActivity(value);
+                                        await getValues();
+
+                                        try {
+                                          Map data = {
+                                            'date': _userDateController.text,
+                                            'agn_code': widget.id
+                                          };
+
+                                          var response = await http.post(
+                                              Uri.parse(base_Url +
+                                                  "api/v1/agent/get-attendance-details"),
+                                              body: data);
+
+                                          var jsonata =
+                                              json.decode(response.body);
+
+                                          getDistance = jsonata['attendance']
+                                              ['total_distance'];
+                                          start_day = jsonata["attendance"]
+                                              ['started_at'];
+                                          endDay =
+                                              jsonata["attendance"]['ended_at'];
+                                        } catch (e) {
+                                          print(e);
+                                        }
+
+
+                                      });
+
+
+
                                   },
                                 ),
                               ),
                             ],
                           )),
+
                       SingleChildScrollView(
                         physics: NeverScrollableScrollPhysics(),
                         scrollDirection: Axis.vertical,
@@ -706,8 +963,7 @@ print(data);
                                                               CrossAxisAlignment
                                                                   .center,
                                                           children: const [
-                                                            Text(
-                                                                'Shop Name',
+                                                            Text('Shop Name',
                                                                 style:
                                                                     TextStyle(
                                                                   color: Colors
@@ -763,15 +1019,25 @@ print(data);
                                                               CrossAxisAlignment
                                                                   .center,
                                                           children: [
-                                                            Text(
-                                                                snapshot
-                                                                    .data[index]
-                                                                    .name,
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize:
-                                                                      12.0,
-                                                                )),
+                                                            Flexible(
+                                                              child: Text(
+                                                                  snapshot
+                                                                      .data[
+                                                                          index]
+                                                                      .name,
+                                                                  maxLines: 3,
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        12.0,
+                                                                  )),
+                                                            )
                                                           ]),
                                                     ),
                                                     Container(
@@ -915,24 +1181,25 @@ print(data);
                                                               CrossAxisAlignment
                                                                   .center,
                                                           children: [
-                                                            Flexible(child:Text(
-
-
-                                                                snapshot
-                                                                    .data[index]
-                                                                    .remarks,
-                                                                maxLines: 3,
-                                                                overflow: TextOverflow.ellipsis,
-                                                                textAlign: TextAlign.center,
-
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize:
-                                                                      12.0,
-                                                                )
-
-
-                                                            ),),
+                                                            Flexible(
+                                                              child: Text(
+                                                                  snapshot
+                                                                      .data[
+                                                                          index]
+                                                                      .remarks,
+                                                                  maxLines: 3,
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        12.0,
+                                                                  )),
+                                                            ),
                                                           ]),
                                                     ),
                                                     SizedBox(
@@ -978,8 +1245,7 @@ print(data);
                                                           ]),
                                                     ),
                                                   ]),
-
-                                                        TableRow(children: [
+                                                  TableRow(children: [
                                                     Container(
                                                       color: Color.fromRGBO(
                                                           106, 136, 171, 1),
@@ -1020,7 +1286,8 @@ print(data);
                                                               CrossAxisAlignment
                                                                   .center,
                                                           children: const [
-                                                            Text('Companies Working With',
+                                                            Text(
+                                                                'Companies Working With',
                                                                 style:
                                                                     TextStyle(
                                                                   color: Colors
@@ -1036,34 +1303,34 @@ print(data);
                                                                 )),
                                                           ]),
                                                     ),
-                                            Container(
-                                            color: Color.fromRGBO(
-                                            106, 136, 171, 1),
-                                            height: 50,
-                                            child: Column(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment
-                                                .center,
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment
-                                                .center,
-                                            children: const [
-                                            Text('Our Brands',
-                                            style:
-                                            TextStyle(
-                                            color: Colors
-                                                .white,
-                                            fontSize:
-                                            15.0,
-                                            backgroundColor:
-                                            Color.fromRGBO(
-                                            106,
-                                            136,
-                                            171,
-                                            1),
-                                            )),
-                                            ]),
-                                            ),
+                                                    Container(
+                                                      color: Color.fromRGBO(
+                                                          106, 136, 171, 1),
+                                                      height: 50,
+                                                      child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: const [
+                                                            Text('Our Brands',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontSize:
+                                                                      15.0,
+                                                                  backgroundColor:
+                                                                      Color.fromRGBO(
+                                                                          106,
+                                                                          136,
+                                                                          171,
+                                                                          1),
+                                                                )),
+                                                          ]),
+                                                    ),
                                                   ]),
                                                   TableRow(children: [
                                                     SizedBox(
@@ -1076,20 +1343,24 @@ print(data);
                                                               CrossAxisAlignment
                                                                   .center,
                                                           children: [
-                                                          Flexible(child:  Text(
-                                                                snapshot
-                                                                    .data[index]
-                                                                    .distributor_address,
-                                                              textAlign: TextAlign.center,
-                                                              overflow: TextOverflow.ellipsis,
-
-                                                              maxLines: 2,
-
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize:
-                                                                      12.0,
-                                                                ))),
+                                                            Flexible(
+                                                                child: Text(
+                                                                    snapshot
+                                                                        .data[
+                                                                            index]
+                                                                        .distributor_address,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    maxLines: 3,
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          12.0,
+                                                                    ))),
                                                           ]),
                                                     ),
                                                     Container(
@@ -1113,36 +1384,40 @@ print(data);
                                                                 )),
                                                           ]),
                                                     ),
-                                            Container(
-                                            height: 50,
-                                            child: Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment
-                                                .center,
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment
-                                                .center,
-                                            children: [
-                                            Flexible(child:Text(
-                                            snapshot
-                                                .data[index]
-                                                .our_brands,
-
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                textAlign: TextAlign.center,
-                                            style:
-                                            TextStyle(
-                                            fontSize:
-                                            12.0,
-                                            )),),
-                                            ]),
-                                            ),
-
+                                                    Container(
+                                                      height: 50,
+                                                      child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Flexible(
+                                                              child: Text(
+                                                                  snapshot
+                                                                      .data[
+                                                                          index]
+                                                                      .our_brands,
+                                                                  maxLines: 2,
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        12.0,
+                                                                  )),
+                                                            ),
+                                                          ]),
+                                                    ),
                                                   ]),
 
-
-                                               /*   TableRow(children: [
+                                                  /*   TableRow(children: [
                                                     Container(
                                                       color: Color.fromRGBO(
                                                           106, 136, 171, 1),

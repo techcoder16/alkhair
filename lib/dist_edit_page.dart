@@ -9,7 +9,7 @@ import 'package:alkahir/plugins/global.dart';
 import 'package:background_locator/background_locator.dart';
 import 'package:background_locator/location_dto.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-
+import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:csc_picker/csc_picker.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/cupertino.dart';
@@ -113,8 +113,9 @@ class EditDistributor extends StatefulWidget {
     required this.added_by,
     required this.avatar,
     required this.did,
-    required this.width,
     required this.depth,
+    required this.width,
+
     required this.dst_code,
   }) : super(key: key);
 
@@ -159,10 +160,13 @@ List<String> _valueCompanies =[];
   late bool v4 = false;
 
   String assertiveURL =
-      base_Url + "alkhair/storage/app/public/images/distributors/";
+      base_Url + "storage/images/distributors/";
 
   late int value_type;
   late String stringDistributorValueType="";
+  bool ownedCheck = false;
+  bool workingCheck = false;
+  late  LatLng currentPostion=LatLng(0,0);
 
   final TextEditingController _distributorCompaniesController =
       TextEditingController();
@@ -262,6 +266,14 @@ List<String> _valueCompanies =[];
   //============================== Image from gallery
 
   //============================== Show from gallery
+  Future<void> _getUserLocation() async {
+    var position = await GeolocatorPlatform.instance.getCurrentPosition();
+
+    setState(() {
+      currentPostion = LatLng(position.latitude, position.longitude);
+      _distributorCoordinatesController.text = currentPostion.latitude.toString() + "," + currentPostion.longitude.toString();
+    });
+  }
 
   void _resetState() {
     setState(() {
@@ -346,8 +358,9 @@ List<String> _valueCompanies =[];
       'dst_code': did
     };
 
+
     http.MultipartRequest request = http.MultipartRequest("POST",
-        Uri.parse(base_Url + "alkhair/public/api/v1/agent/UpdateDistributor"));
+        Uri.parse(base_Url + "api/v1/agent/UpdateDistributor"));
 
     Map<String, String> headers = {"Content-Type": "application/json"};
 
@@ -366,6 +379,11 @@ List<String> _valueCompanies =[];
             .writeAsBytes(buffer.asUint8List(
                 byteData.offsetInBytes, byteData.lengthInBytes));
 
+
+
+
+
+
         try {
           request.files
               .add(await http.MultipartFile.fromPath('avatar[]', file1.path));
@@ -382,12 +400,10 @@ List<String> _valueCompanies =[];
     request.headers.addAll(headers);
     request.fields.addAll(data);
 
-    pr.show();
+   // pr.show();
 
     http.StreamedResponse response = await request.send();
     final respStr = await response.stream.bytesToString();
-
-    print(response.reasonPhrase);
 
 
     if (response.statusCode == 200) {
@@ -483,7 +499,11 @@ List<String> _valueCompanies =[];
 
   @override
   void initState() {
-    _distributorCoordinatesController.text = widget.coordinates.toString();
+
+   // _distributorCoordinatesController.text = currentPostion.latitude.toString() +
+     //   "," +
+       // currentPostion.longitude.toString();
+
     _distributorNameController.text = widget.dname;
     _distributorShopNameController.text = widget.shop_name;
     _distributorEmailController.text = widget.demail;
@@ -494,7 +514,7 @@ List<String> _valueCompanies =[];
 
     _value = widget.city;
 
-    _distributorCoordinatesController.text = widget.coordinates;
+   // _distributorCoordinatesController.text = widget.coordinates;
 
     _distributorCompaniesController.text = widget.companies_working_with;
     _distributorCardLimitController.text = widget.credit_limit;
@@ -509,7 +529,6 @@ List<String> _valueCompanies =[];
     for (int i = 0; i < splitNames.length; i++){
       _valueCompanies.add(splitNames[i]);
     }
-print(_valueCompanies);
 
     _distributorShopSizeControllerw.text = widget.width;
     _distributorShopSizeController.text = widget.depth;
@@ -539,13 +558,25 @@ print(_valueCompanies);
 
     if (value_check_2 = widget.working_with_us == "1") {
       v1 = true;
+v2 =false;
+
+      workingCheck =true;
     } else {
-      v2 = true;
+      v1 = false;
+      v2=true;
+      workingCheck =false;
     }
+
     if (value_check = widget.owned == "1") {
       v3 = true;
+      v4=false;
+      ownedCheck=true;
     } else {
-      v3 = true;
+      v4 = true;
+      v3=false;
+
+      ownedCheck =false;
+
     }
 
     port.listen(
@@ -994,7 +1025,7 @@ print(_valueCompanies);
                     ],
                   ),
                   onPressed: () {
-                    pr.show();
+                   // pr.show();
                     _onImageButtonPressed(ImageSource.camera, value,
                         context: context);
                   },
@@ -1507,7 +1538,7 @@ print(_valueCompanies);
                                   onChanged: (bool? value) {
                                     setState(() {
                                       this.value_check_2 = value!;
-
+                                      workingCheck = true;
                                       v2 = false;
                                       v1 = true;
                                     });
@@ -1518,6 +1549,7 @@ print(_valueCompanies);
                                   value: v2,
                                   onChanged: (bool? value) {
                                     setState(() {
+                                      workingCheck = false;
                                       this.value_check_2 = value!;
                                       v1 = false;
                                       v2 = true;
@@ -1595,6 +1627,9 @@ print(_valueCompanies);
                                   onChanged: (bool? value) {
                                     setState(() {
                                       this.value_check = value!;
+                                      ownedCheck = true;
+
+
                                       v3 = true;
                                       v4 = false;
                                     });
@@ -1606,6 +1641,9 @@ print(_valueCompanies);
                                   onChanged: (bool? value) {
                                     setState(() {
                                       this.value_check = value!;
+
+                                      ownedCheck = false;
+
                                       v3 = false;
                                       v4 = true;
                                     });
@@ -1816,23 +1854,51 @@ print(_valueCompanies);
                             ),
 
                             const SizedBox(height: 20.0),
-                            Visibility(
-                              visible: false,
-                              child: TextField(
-                                controller: _distributorCoordinatesController,
-                                decoration: InputDecoration(
-                                    labelText: 'Coordinates',
-                                    labelStyle: TextStyle(
-                                        fontFamily: 'Raleway',
-                                        fontWeight: FontWeight.normal,
-                                        color: Colors.grey),
-                                    icon: Icon(Icons.add_location_alt_sharp),
-                                    focusedBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Color.fromRGBO(
-                                                55, 75, 167, 1)))),
-                              ),
-                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                SizedBox(width: 0.0),
+                                Expanded(child:
+
+                                TextField
+                                  (
+                                  controller: _distributorCoordinatesController,
+                                  decoration: InputDecoration(
+
+                                      labelText: 'Current Coordinates',
+                                      labelStyle: TextStyle(
+                                          fontFamily: 'Raleway',
+                                          fontWeight: FontWeight.normal,
+                                          color: Colors.grey),
+                                      icon: Icon(Icons.add_location_rounded ),
+
+                                      focusedBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Color.fromRGBO(
+                                                  55, 75, 167, 1)))),
+                                ),
+
+
+                                ),
+
+                                Expanded(
+
+                                  child:  IconButton(
+                                    icon: const Icon(Icons.add_location_alt_sharp),
+                                    color: Colors.grey,
+
+                                    onPressed: () async {
+
+
+                                 await    _getUserLocation();
+
+
+                                    }
+                                    ,
+                                  ),
+
+                                ),
+                              ], ),
 
                             SizedBox(height: 20.0),
 
@@ -1846,6 +1912,8 @@ print(_valueCompanies);
                                 elevation: 7.0,
                                 child: InkWell(
                                   onTap: () {
+                                    _getUserLocation();
+
 
                                     int x = 1;
                                     x =  x * validateField(_distributorShopSizeController.text);
@@ -1938,6 +2006,9 @@ print(_valueCompanies);
           return;
           }
 
+
+
+
                                       submit(
                                           _distributorNameController.text,
                                           _distributorShopNameController.text,
@@ -1962,13 +2033,13 @@ print(_valueCompanies);
                                           _distributorContactTController.text,
                                           _value_brand,
                                           widget.id,
-                                          value_check_2,
-                                          value_check,
+                                          workingCheck,
+                                          ownedCheck,
                                           _imageFileList,
                                           value_type,
                                           widget.dst_code,
-                                          widget.width,
-                                          widget.depth)
+                                          _distributorShopSizeControllerw.text,
+                                          _distributorShopSizeController.text)
                                           .then((value) {
                                         setState(() {
                                           saveAdress = value;

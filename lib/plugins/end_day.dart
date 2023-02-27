@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:alkahir/plugins/global.dart';
 import 'package:alkahir/plugins/start_day.dart';
 import 'package:background_locator/background_locator.dart';
 
@@ -44,7 +45,7 @@ Future<List<Agent>> _getAgent(id, List<TextEditingController> _controllers) asyn
 
   // pr.show();
   var response = await http.get(Uri.parse(
-      "http://alkhair.rextech.pk/alkhair/public/api/v1/agent/getdistributors/" +id));
+      "http://alkhair.rextech.pk/api/v1/agent/getdistributors/" +id));
 
 
 
@@ -234,7 +235,7 @@ i++;
 
   var response = await http.post(
       Uri.parse(
-          "http://alkhair.rextech.pk/alkhair/public/api/v1/agent/daily-remarks"),
+          base_Url + "api/v1/agent/daily-remarks"),
       body: data);
 
   if (response.statusCode == 200) {

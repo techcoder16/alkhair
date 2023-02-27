@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:typed_data';
 
 import 'package:alkahir/plugins/global.dart';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
@@ -29,8 +31,17 @@ class MyHttpOverrides extends HttpOverrides {
   }
 }
 
+void printHello() {
+  final DateTime now = new DateTime.now();
+  final int isolateId = Isolate.current.hashCode;
+  print("[$now] Hello, world! isolate=${isolateId} function='$printHello'");
+}
+
+
+
 initData() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
+
 
   if (prefs.getBool("CheckIn") == null ||
       prefs.getBool("ShouldDisplay") == null ||
@@ -109,8 +120,14 @@ Uint8List dataFromBase64String(String base64String) {
 }
 
 
-
+a()
+{
+  print("ssss");
+}
 Future<void> main() async {
+
+
+
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = new MyHttpOverrides();
 
@@ -159,7 +176,7 @@ Future<void> main() async {
 
         try {
           var response = await http.post(
-              Uri.parse(base_Url + "alkhair/public/api/v1/agent/trips"),
+              Uri.parse(base_Url + "api/v1/agent/trips"),
               body: d1);
           print(d1);
           print(response.statusCode);
@@ -205,7 +222,7 @@ Future<void> main() async {
         http.MultipartRequest request = http.MultipartRequest(
             "POST",
             Uri.parse(
-                base_Url + "alkhair/public/api/v1/agent/distributor"));
+                base_Url + "api/v1/agent/distributor"));
 
 
         Map<String, String> headers = {"Content-Type": "application/json"};
@@ -357,7 +374,12 @@ Future<void> main() async {
       home: isLoggedIn == null || isLoggedIn == false
           ? LoginPage()
           : BoardView())));
+
+  final int helloAlarmID = 0;
+
+
 }
+
 
 class MyApp extends StatelessWidget {
   var login;

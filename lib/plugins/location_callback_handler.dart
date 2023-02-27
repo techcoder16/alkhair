@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:background_locator/location_dto.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/MapLocation.dart';
+import 'end_day.dart';
 import 'location_service_repository.dart';
 
 class LocationCallbackHandler {
@@ -41,6 +43,46 @@ print(json);
 
 
     prefs.setString("location_key", json);
+  var  now = DateTime.now();
+  var  formatter = DateFormat('yyyy-MM-dd');
+
+
+   var  formattedDate = DateFormat.Hms().format(
+      now,
+    );
+
+    var newDate =
+        formattedDate.toString();
+
+    print(newDate);
+if(newDate == "00:00:00")
+  {
+    SharedPreferences prefs =
+    await SharedPreferences.getInstance();
+
+    prefs.setDouble("Opacity", 1);
+
+    prefs.setDouble("Opacity2", 0.3);
+    prefs.setDouble("LocationLattitude", 0.0);
+    prefs.setDouble("LocationLongitude", 0.0);
+    prefs.setBool("CheckIn", false);
+    prefs.setBool("ShouldDisplay", false);
+
+
+    /// destination marker
+
+
+    prefs.setBool("CheckIn", false);
+
+    prefs.setDouble("Opacity2", 0.3);
+    onStop();
+
+    //CheckOutSubmit(latlng, newDate);
+
+
+
+  }
+
 
 
     LocationServiceRepository myLocationCallbackRepository =

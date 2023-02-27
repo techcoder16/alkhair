@@ -95,7 +95,7 @@ void callbackDispatcher() {
 
                   var response = await http.post(
                       Uri.parse(
-                          base_Url + "alkhair/public/api/v1/agent/trips"),
+                          base_Url + "api/v1/agent/trips"),
                       body: d1);
                   print(d1);
                   print(response.statusCode );

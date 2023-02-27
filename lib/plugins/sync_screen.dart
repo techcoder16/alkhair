@@ -108,7 +108,7 @@ print(data);
     http.MultipartRequest request = http.MultipartRequest(
         "POST",
         Uri.parse(
-            base_Url + "alkhair.rextech.pk/alkhair/public/api/v1/agent/distributor"));
+            base_Url + "alkhair.rextech.pk/api/v1/agent/distributor"));
 
     Map<String, String> headers = {"Content-Type": "application/json"};
 
