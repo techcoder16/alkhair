@@ -55,7 +55,7 @@ initData() async {
       prefs.getString("zone") == null ||
       prefs.getDouble("currentLocationLattitude") == null ||
       prefs.getString("startDay") == null ||
-      prefs.getString("Endday") == null ||
+      prefs.getBool("Endday") == null ||
       prefs.getDouble("currentLocationLongitude") == null ||
       prefs.getDouble("LocationLattitude") == null ||
       prefs.getDouble("LocationLongitude") == null ||
@@ -328,7 +328,7 @@ Future<void> main() async {
       if(checkInternet ==true) {
 
         if(valueForSync ==false) {
-          prefs.remove("dist_key");
+         prefs.remove("dist_key");
           if(msgForSync =="")
           {
             msgForSync ="Data Sync";

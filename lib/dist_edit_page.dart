@@ -160,8 +160,7 @@ List<String> _valueCompanies =[];
   late bool v4 = false;
 
   String assertiveURL =
-      base_Url + "storage/images/distributors/";
-
+     "";
   late int value_type;
   late String stringDistributorValueType="";
   bool ownedCheck = false;
@@ -533,17 +532,38 @@ List<String> _valueCompanies =[];
     _distributorShopSizeControllerw.text = widget.width;
     _distributorShopSizeController.text = widget.depth;
 
-    value_type = int.parse(widget.ddistributor_type);
+    value_type = 0;
+    if(widget.ddistributor_type == 'Retailer')
+      {
+        value_type = 2;
+
+      }
+    else if (widget.ddistributor_type == 'Dealer'){
+      value_type =1;
+    }
+    else{
+      value_type = 0;
+    }
 
     stringDistributorValueType = widget.ddistributor_type;
 
     var spBrand = widget.our_brands.split(",");
     var spImage = widget.avatar.split(",");
+      spImage[0].replaceAll(' ', '');
+    spImage[1].replaceAll(' ', '');
+    spImage[2].replaceAll(' ', '');
 
     try {
-      fileOne = XFile(assertiveURL + spImage[0]);
-      fileTwo = XFile(assertiveURL + spImage[1]);
-      fileThree = XFile(assertiveURL + spImage[2]);
+      fileOne = XFile(assertiveURL + spImage[0].trim());
+      fileTwo = XFile(assertiveURL + spImage[1].trim());
+      fileThree = XFile(assertiveURL + spImage[2].trim());
+      print(fileOne);
+      print(fileTwo);
+      print(fileThree);
+      print(spImage[0]);
+      print(spImage[1]);
+      print(spImage[2]);
+
     } catch (e) {
       print(e);
     }

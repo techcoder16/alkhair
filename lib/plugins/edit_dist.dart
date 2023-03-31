@@ -74,8 +74,9 @@ class _agentEditListState extends State<EditAgentList> {
   String _splitString(String value) {
     var arrayOfString = value.split(',');
 
-    arrayOfString.first = assertiveURL + arrayOfString.first;
 
+
+    print(arrayOfString);
     return arrayOfString.first;
   }
 
@@ -291,7 +292,7 @@ class _agentEditListState extends State<EditAgentList> {
                               ),
                             ),
                             Container(
-                              height: MediaQuery.of(context).size.height+1000,
+                              height: MediaQuery.of(context).size.height+3000,
                               child: FutureBuilder(
                                 future: _getAgent(),
                                 initialData: [],
