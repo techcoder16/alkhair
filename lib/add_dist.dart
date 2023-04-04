@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
+
 import 'package:alkahir/assets/cities.dart';
 import 'package:alkahir/model/distributor_list.dart';
 import 'package:background_locator/background_locator.dart';
@@ -12,7 +13,7 @@ import 'package:csc_picker/csc_picker.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 
@@ -28,6 +29,8 @@ import 'listview.dart';
 import 'package:progress_dialog_null_safe/progress_dialog_null_safe.dart';
 
 import 'model/MapLocation.dart';
+
+
 
 class addDistributor extends StatefulWidget {
   final String id;
@@ -291,31 +294,47 @@ class _addDistributorState extends State<addDistributor> {
       "password_confirmation": "000000",
       'added_by': id,
     };
+  String   img64FileOne = "";
+    String   img64FileTwo = "";
+    String   img64FileThree = "";
 
-    File compressedFileOne = await FlutterNativeImage.compressImage(
-        attachments![0]!.path,
-        quality: 10,
-        percentage: 50);
 
-    final bytesFileOne = File(compressedFileOne.path).readAsBytesSync();
+    if(attachments![0]!.path != "abdef") {
+      File compressedFileOne = await FlutterNativeImage.compressImage(
+          attachments![0]!.path,
+          quality: 10,
+          percentage: 20);
 
+      final bytesFileOne = File(compressedFileOne.path).readAsBytesSync();
+
+      img64FileOne = base64Encode(bytesFileOne);
+    }
+    if(attachments![1]!.path != "abc")
+    {
     File compressedFileTwo = await FlutterNativeImage.compressImage(
-        attachments![1]!.path,
-        quality: 10,
-        percentage: 50);
-
-    File compressedFileThree = await FlutterNativeImage.compressImage(
-        attachments![2]!.path,
-        quality: 10,
-        percentage: 50);
-
-    String img64FileOne = base64Encode(bytesFileOne);
-
+    attachments![1]!.path,
+    quality: 10,
+    percentage: 20);
     final bytesFileTwo = File(compressedFileTwo.path).readAsBytesSync();
-    String img64FileTwo = base64Encode(bytesFileTwo);
+    img64FileTwo = base64Encode(bytesFileTwo);
+
+
+    }
+
+    if(attachments![2]!.path != "abcef")
+      {
+      File compressedFileThree = await FlutterNativeImage.compressImage(
+          attachments![2]!.path,
+          quality: 10,
+          percentage: 20);
 
     final bytesFileThree = File(compressedFileThree.path).readAsBytesSync();
-    String img64FileThree = base64Encode(bytesFileThree);
+    img64FileThree = base64Encode(bytesFileThree);
+
+
+
+    }
+
 
     saveDataDistributor(
         value_type.toString(),
@@ -341,9 +360,9 @@ class _addDistributorState extends State<addDistributor> {
         "0000000",
         "0000000",
         id,
-        img64FileOne,
-        img64FileTwo,
-        img64FileThree,
+        img64FileOne!,
+        img64FileTwo!,
+        img64FileThree!,
       depth, width
         );
 
@@ -1842,12 +1861,7 @@ class _addDistributorState extends State<addDistributor> {
                                         return;
                                       }
 
-                                      if (fileThree?.path !=
-                                              "assets/noimage.png" &&
-                                          fileTwo?.path !=
-                                              "assets/noimage.png" &&
-                                          fileOne?.path !=
-                                              "assets/noimage.png") {
+                                      if (true) {
 
                                         isTapped=true;
                                         submit(

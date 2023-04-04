@@ -1325,7 +1325,19 @@ if(isSame==false)
                           ],
                         ),
                       ),
-
+                      Container(
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.fromLTRB(20, 700, 10, 0),
+                        height: 100,
+                        child: const Text(
+                          "v-1.1",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 12,
+                              fontFamily: 'Raleway'),
+                        ),
+                      ),
 
                       Container(
                         alignment: Alignment.center,
@@ -1449,7 +1461,6 @@ if(isSame==false)
                           ],
                         ),
                       ),
-
 
                       Container(
                         alignment: Alignment.center,
@@ -1842,6 +1853,8 @@ if(isSame==false)
                                               fontSize: 16,
                                               fontFamily: 'Raleway'),
                                         ),
+
+
                                       ],
                                     );
                                   },

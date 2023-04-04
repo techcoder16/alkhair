@@ -6,6 +6,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 
@@ -213,16 +214,23 @@ i=i+1;
 
         Map<String, String> headers = {"Content-Type": "multipart/form-data"};
 
-        request.files.add(await http.MultipartFile.fromBytes(
-            'avatar[]', dataFromBase64String(element.fileOne),
-            filename: "image"+i.toString()));
-        request.files.add(await http.MultipartFile.fromBytes(
-            'avatar[]', dataFromBase64String(element.fileTwo),
-            filename: "image_2"+i.toString()));
+if(element.fileOne != "") {
+  request.files.add(await http.MultipartFile.fromBytes(
+      'avatar[]', dataFromBase64String(element.fileOne),
+      filename: "image" + i.toString()));
+}
+        if(element.fileTwo != "") {
+          request.files.add(await http.MultipartFile.fromBytes(
+              'avatar[]', dataFromBase64String(element.fileTwo),
+              filename: "image_2" + i.toString()));
+        }
 
-        request.files.add(await http.MultipartFile.fromBytes(
-            'avatar[]', dataFromBase64String(element.fileThree),
-            filename: "image_3"+i.toString()));
+if(element.fileThree != "") {
+  request.files.add(await http.MultipartFile.fromBytes(
+      'avatar[]', dataFromBase64String(element.fileThree),
+      filename: "image_3" + i.toString()));
+}
+
         element.working_with_us == null ? "" : element.working_with_us;
 
         Map<String, String> d1 = {
@@ -304,6 +312,9 @@ i=i+1;
       if (checkInternet == true) {
         if (valueForSync == false) {
           prefs.remove("dist_key");
+          await DefaultCacheManager().emptyCache();
+          imageCache?.clear();
+
           if (msgForSync == "") {
             msgForSync = "Data Sync";
           }

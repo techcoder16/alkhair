@@ -9,7 +9,7 @@ import 'package:alkahir/plugins/global.dart';
 import 'package:background_locator/background_locator.dart';
 import 'package:background_locator/location_dto.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter_native_image/flutter_native_image.dart';
+
 import 'package:csc_picker/csc_picker.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,8 +20,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
-import 'package:multi_select_flutter/util/multi_select_item.dart';
+
 
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -33,6 +32,7 @@ import 'package:progress_dialog_null_safe/progress_dialog_null_safe.dart';
 import 'model/MapLocation.dart';
 import 'model/image_uploadmodel.dart';
 import 'plugins/functions.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 class EditDistributor extends StatefulWidget {
   final String id;
@@ -221,6 +221,13 @@ List<String> _valueCompanies =[];
 
 
 
+  Future<File> downloadAndSaveImage(String url) async {
+    final cacheManager = CacheManager(Config("mycache"));
+    final file = await cacheManager.getSingleFile(url);
+    return file;
+  }
+
+
 
   List<String> _selectedBrands = [];
 
@@ -364,19 +371,25 @@ List<String> _valueCompanies =[];
     Map<String, String> headers = {"Content-Type": "application/json"};
 
     int x = 0;
-    attachments!.forEach((element) async {
-      if (element.path.contains("http")) {
-        final http.Response responseData =
-            await http.get(Uri.parse(assertiveURL + element.path));
-        Uint8List uint8list = responseData.bodyBytes;
+    for (var i=0;i< attachments!.length;i++) {
 
-        uint8list = responseData.bodyBytes;
-        var buffer = uint8list.buffer;
-        ByteData byteData = ByteData.view(buffer);
-        var tempDir = await getTemporaryDirectory();
-        File file1 = await File('${tempDir.path}/img' + x.toString())
-            .writeAsBytes(buffer.asUint8List(
-                byteData.offsetInBytes, byteData.lengthInBytes));
+      if (attachments[i]!.path.contains("http")) {
+
+        final file1 = await downloadAndSaveImage(attachments[i].path)!;
+
+
+
+        // final http.Response responseData =
+        //     await http.get(Uri.parse(assertiveURL + element.path));
+        // Uint8List uint8list = responseData.bodyBytes;
+        //
+        // uint8list = responseData.bodyBytes;
+        // var buffer = uint8list.buffer;
+        // ByteData byteData = ByteData.view(buffer);
+        // var tempDir = await getTemporaryDirectory();
+        // File file1 = await File('${tempDir.path}/img' + x.toString())
+        //     .writeAsBytes(buffer.asUint8List(
+        //         byteData.offsetInBytes, byteData.lengthInBytes));
 
 
 
@@ -386,14 +399,14 @@ List<String> _valueCompanies =[];
         try {
           request.files
               .add(await http.MultipartFile.fromPath('avatar[]', file1.path));
-        } catch (e) {}
+        } catch (e) { print(e);}
       } else {
         try {
-          request.files
-              .add(await http.MultipartFile.fromPath('avatar[]', element.path));
-        } catch (e) {}
+      request.files
+              .add(await http.MultipartFile.fromPath('avatar[]', attachments[i]!.path));
+        } catch (e) {print(e);}
       }
-    });
+    }
 
 
     request.headers.addAll(headers);
@@ -549,9 +562,8 @@ List<String> _valueCompanies =[];
 
     var spBrand = widget.our_brands.split(",");
     var spImage = widget.avatar.split(",");
-      spImage[0].replaceAll(' ', '');
-    spImage[1].replaceAll(' ', '');
-    spImage[2].replaceAll(' ', '');
+
+
 
     try {
       fileOne = XFile(assertiveURL + spImage[0].trim());

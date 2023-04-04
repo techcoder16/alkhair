@@ -92,6 +92,9 @@ dependencies:
   flutter_native_image: ^0.0.6+1
   double_back_to_close: ^2.0.0
   day_night_time_picker: ^1.0.5
+  sqflite: ^2.0.2+1
+  path: ^1.8.0
+  flutter_cache_manager: ^3.3.0
 
 
 

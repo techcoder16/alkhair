@@ -7,9 +7,8 @@ import 'dart:typed_data';
 import 'package:alkahir/plugins/global.dart';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -18,7 +17,6 @@ import 'model/distributor_list.dart';
 import 'plugins/constglobal.dart';
 import 'login.dart';
 import 'board.dart';
-import 'package:path_provider/path_provider.dart';
 
 import 'package:workmanager/workmanager.dart';
 
@@ -127,9 +125,10 @@ a()
 Future<void> main() async {
 
 
-
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = new MyHttpOverrides();
+
+
 
   // <-- Notice the updated return type and async
   WidgetsFlutterBinding.ensureInitialized();
@@ -184,6 +183,8 @@ Future<void> main() async {
           if (response.statusCode == 200) {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             prefs.remove("dist_key_checkout");
+
+
           }
         } catch (e) {}
       });
@@ -329,6 +330,9 @@ Future<void> main() async {
 
         if(valueForSync ==false) {
          prefs.remove("dist_key");
+         await DefaultCacheManager().emptyCache();
+         imageCache?.clear();
+
           if(msgForSync =="")
           {
             msgForSync ="Data Sync";
