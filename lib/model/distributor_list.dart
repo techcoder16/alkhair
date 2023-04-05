@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:alkahir/plugins/dialog_list.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -203,6 +204,7 @@ late String width;
 
 
 
+
    Dist valueDist = Dist(
 
 
@@ -239,12 +241,19 @@ late String width;
 
 
    );
+int? valuecount =prefs.getInt("countdist");
+   valuecount = valuecount == null?0 : valuecount;
+
+   prefs.setInt("countdist", valuecount + 1);
+   if(valuecount <= 4) {
 
      String? json = prefs.getString("dist_key");
 
      json = ((json ?? "") + jsonEncode(valueDist)!)! + " , ";
 
      prefs.setString("dist_key", json!);
+   }
+
 
 
  }
@@ -262,7 +271,6 @@ List<Dist>? distList;
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
-//prefs.remove("dist_key");
 
   String? jsonStar = prefs.getString("dist_key");
 

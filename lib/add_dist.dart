@@ -335,39 +335,56 @@ class _addDistributorState extends State<addDistributor> {
 
     }
 
-
-    saveDataDistributor(
-        value_type.toString(),
-        distributor,
-        shop,
-        email,
-        cnic,
-        address,
-        city,
-        coordinates,
-        shopsize,
-        floor,
-        ownedCheck == true ? "1" : "0",
-        sale,
-        usales,
-        totalSales,
-        card,
-        companies,
-        workingCheck == true ? "1" : "0",
-        _value_brand_param,
-        contactNo,
-        contactt,
-        "0000000",
-        "0000000",
-        id,
-        img64FileOne!,
-        img64FileTwo!,
-        img64FileThree!,
-      depth, width
-        );
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    int? valuecount =preferences.getInt("countdist");
+    valuecount = valuecount == null?0 : valuecount;
 
 
-//loadDataDistributor();
+    if(valuecount == 5)
+
+      {
+        showAlertDialog(context, "error", "Customer Limit Exceeded. Kindly Sync first to add more",1);
+
+
+      }
+    if (valuecount <=4) {
+      saveDataDistributor(
+          value_type.toString(),
+          distributor,
+          shop,
+          email,
+          cnic,
+          address,
+          city,
+          coordinates,
+          shopsize,
+          floor,
+          ownedCheck == true ? "1" : "0",
+          sale,
+          usales,
+          totalSales,
+          card,
+          companies,
+          workingCheck == true ? "1" : "0",
+          _value_brand_param,
+          contactNo,
+          contactt,
+          "0000000",
+          "0000000",
+          id,
+          img64FileOne!,
+          img64FileTwo!,
+          img64FileThree!,
+          depth,
+          width
+      );
+    }
+    else
+      {
+        showAlertDialog(context, "error", "Customer Limit Exceeded. Kindly Sync first to add more",1);
+
+      }
+
     Navigator.push(context, MaterialPageRoute(builder: (context) => BoardView()));
 //    showAlertDialog(context, "Alert", "Customer Added!", 1);
 
@@ -847,7 +864,7 @@ class _addDistributorState extends State<addDistributor> {
                         : null;
                     final int? quality = qualityController.text.isNotEmpty
                         ? int.parse(qualityController.text)
-                        : null;
+                        : 10;
                     onPick(width, height, quality);
                     if (pr.isShowing()) {
                       pr.hide();

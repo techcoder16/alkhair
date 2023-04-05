@@ -1,10 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'dart:io';
 import 'dart:isolate';
+
+
+
 import 'dart:typed_data';
 
+import 'package:alkahir/plugins/dialog_list.dart';
 import 'package:alkahir/plugins/global.dart';
+import 'package:alkahir/plugins/sync_checkout.dart';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -57,6 +63,7 @@ initData() async {
       prefs.getDouble("currentLocationLongitude") == null ||
       prefs.getDouble("LocationLattitude") == null ||
       prefs.getDouble("LocationLongitude") == null ||
+      prefs.getInt("countdist") == null ||
       prefs.getString("location_key") == null ||
       prefs.getBool("CheckIn") == false ||
 
@@ -76,7 +83,7 @@ initData() async {
     prefs.setString("location_key", "");
 
     prefs.setString("startDay", "");
-
+    prefs.setInt("countdist",0) ;
     prefs.setDouble("Opacity2", 0.3);
     prefs.setDouble("currentLocationLattitude", 0.0);
     prefs.setDouble("currentLocationLongitude", 0.0);
@@ -118,10 +125,6 @@ Uint8List dataFromBase64String(String base64String) {
 }
 
 
-a()
-{
-  print("ssss");
-}
 Future<void> main() async {
 
 
@@ -141,6 +144,7 @@ Future<void> main() async {
 
   late List<CheckOut> finaldist = [];
   late List<Dist> finalcheck = [];
+
   bool valueForSync = false;
   String msgForSync = "";
   List<CheckOut> checkoutList = [];
@@ -177,8 +181,6 @@ Future<void> main() async {
           var response = await http.post(
               Uri.parse(base_Url + "api/v1/agent/trips"),
               body: d1);
-          print(d1);
-          print(response.statusCode);
 
           if (response.statusCode == 200) {
             SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -212,9 +214,17 @@ Future<void> main() async {
 
 
 
-    if(finalcheck.isNotEmpty )
+    if(finalcheck.isNotEmpty && checkInternet == true)
     {
-      finalcheck.forEach((element) async {
+
+
+
+
+
+
+
+
+      for (var element in finalcheck)   {
 
         var dataDist = element as Dist;
 
@@ -318,7 +328,7 @@ Future<void> main() async {
 
 
 
-      });
+      }
 
 
 
@@ -330,6 +340,8 @@ Future<void> main() async {
 
         if(valueForSync ==false) {
          prefs.remove("dist_key");
+         prefs.remove("countdist");
+
          await DefaultCacheManager().emptyCache();
          imageCache?.clear();
 
@@ -377,7 +389,10 @@ Future<void> main() async {
       debugShowCheckedModeBanner: false,
       home: isLoggedIn == null || isLoggedIn == false
           ? LoginPage()
-          : BoardView())));
+          : (finalcheck.isNotEmpty  &&  checkInternet ==true ) ? SyncCheckOut( id: prefs.getString("id")!):BoardView()
+
+
+  )));
 
   final int helloAlarmID = 0;
 
@@ -391,6 +406,9 @@ class MyApp extends StatelessWidget {
   void initState() {}
 
   Future<bool> hasAlreadyStarted() async {
+
+
+
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -399,6 +417,7 @@ class MyApp extends StatelessWidget {
         prefs.setBool("isLogin", false);
 
         initData();
+
 
         return false;
       } else {
@@ -414,6 +433,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
+
     return MaterialApp(
       title: 'Al-Khair Gadoon Ltd.',
       theme: ThemeData(
@@ -423,12 +444,15 @@ class MyApp extends StatelessWidget {
           future: hasAlreadyStarted(),
           builder: (context, snapshot) {
             if (snapshot.data == true) {
+
               Workmanager().initialize(
                 callbackDispatcher,
                 isInDebugMode: true,
               );
 
-              return snapshot.hasData == true ? BoardView() : LoginPage();
+
+
+              return snapshot.hasData == true  ? BoardView() : LoginPage();
             } else {
               Workmanager().initialize(
                 callbackDispatcher,

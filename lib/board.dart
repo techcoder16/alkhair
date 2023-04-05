@@ -6,6 +6,7 @@ import 'dart:core';
 import 'dart:isolate';
 import 'dart:typed_data';
 import 'package:alkahir/plugins/edit_dist.dart';
+import 'package:alkahir/plugins/sync_checkout.dart';
 import 'package:alkahir/view_activity.dart';
 import 'package:http/http.dart' as http;
 
@@ -56,6 +57,10 @@ import 'model/MapLocation.dart';
 
 class BoardView extends StatefulWidget {
   @override
+
+
+
+
   _BoardViewScreenState createState() => _BoardViewScreenState();
 }
 
@@ -102,6 +107,7 @@ double getEditOpacity = 0.0;
   List<String> ListName = [];
 
   bool shouldDisplay = false;
+  int valcount  = 0;
   bool checkTapcount = false;
   bool checkInternet = false;
   double checkinOp = 1;
@@ -170,6 +176,27 @@ String endDay= "";
   }
 
   ///================================== see location data ===========
+Future <bool> checksync() async
+{
+  late List<Dist> finalcheck = [];
+  List<Dist> distList = [];
+
+
+  try {
+    distList = await loadDataDistributor();
+  }
+  catch (e) {
+
+  }
+
+
+  finalcheck = distList;
+await initConnectivity();
+
+
+  return false;
+}
+
 
   Future<void > getStartDay()
   async{
@@ -275,6 +302,15 @@ try {
 try {
   shouldDisplay = await preferences.getBool("ShouldDisplay")!;
 } catch (e) {}
+
+
+    try {
+      valcount = await preferences.getInt("countdist")!;
+
+    } catch (e) {}
+
+
+
 
 try {
 
@@ -1005,9 +1041,23 @@ if(isSame==false)
   }
   @override
   void initState() {
+
+
+
+
+
+
+
+
     var timer = Timer.periodic(Duration(seconds: 7), (Timer t) => checkInState());
+    var timer2 = Timer.periodic(Duration(seconds: 10), (Timer t) => checksync());
 
+    if(valcount>0)
+      {
 
+        showAlertDialog(context, "Error", "Sync first to proceed");
+
+      }
     initConnectivity();
 
     _addMarker(LatLng(currentPostion.latitude, currentlongitude), "origin",
@@ -1157,7 +1207,7 @@ if(isSame==false)
       onWillPop: ()async => false,
 
       child: FutureBuilder(
-        future: Future.wait([getValues(), CheckPermissionClosed()]),
+        future: Future.wait([getValues(), CheckPermissionClosed(),checksync()]),
         builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
 
           return Scaffold(
@@ -1333,6 +1383,20 @@ if(isSame==false)
                           "v-1.1",
                           style: TextStyle(
                               color: Colors.black,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 12,
+                              fontFamily: 'Raleway'),
+                        ),
+                      ),
+                      Container(
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.fromLTRB(20, 750, 10, 0),
+                        height: 100,
+                        child:  Text(
+                          (  valcount  >=5  )?   "Customer Limit Exceeded. Kindly Sync first to add more": "",
+
+                          style: TextStyle(
+                              color: Colors.red,
                               fontWeight: FontWeight.normal,
                               fontSize: 12,
                               fontFamily: 'Raleway'),
@@ -1644,21 +1708,41 @@ if(isSame==false)
                           highlightColor: Colors.white,
                           hoverColor: Colors.white,
                           overlayColor: MaterialStateProperty.all(Colors.white),
-                          onTap: () {
+                          onTap: ()  async {
                             if (checkTapcount == true) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          addDistributor(
-                                            id: id,
-                                            email: email,
-                                            name: name,
-                                            status: checkTapcount,
-                                            lanlat: currentPostion,
-                                            zone: this.designation,
-                                            desgination: this.designation,
-                                          )));
+
+                              SharedPreferences preferences = await SharedPreferences.getInstance();
+                              try {
+                                valcount = await preferences.getInt("countdist")!;
+
+                              } catch (e) {}
+
+
+
+                              if(valcount>=5)
+                                  {
+                                    showAlertDialog(context, "Error", "Customer Limit Exceeded. Kindly Sync first to add more");
+
+
+                                  }
+
+                                else {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              addDistributor(
+                                                id: id,
+                                                email: email,
+                                                name: name,
+                                                status: checkTapcount,
+                                                lanlat: currentPostion,
+                                                zone: this.designation,
+                                                desgination: this.designation,
+                                              )));
+                                }
+
+
                             }
                           },
                           child: Column(

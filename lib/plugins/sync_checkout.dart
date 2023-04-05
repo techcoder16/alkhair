@@ -146,6 +146,7 @@ class _syncCheckOutState extends State<SyncCheckOut> {
       }
 
       showAlertDialog(context, "Alert", "Data Sync");
+
       if (pr.isShowing()) {
         pr.hide();
       }
@@ -194,6 +195,8 @@ class _syncCheckOutState extends State<SyncCheckOut> {
 
   Future<bool> submitDist() async {
     int k = 0;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     initConnectivity();
 
     if (finalcheck.isNotEmpty) {
@@ -275,6 +278,8 @@ if(element.fileThree != "") {
           http.StreamedResponse response = await request.send();
           if (response.statusCode == 200) {
 
+
+
             var responseData = await response.stream.toBytes();
             var responseToString = String.fromCharCodes(responseData);
             var jsonBody = jsonDecode(responseToString);
@@ -308,20 +313,34 @@ if(element.fileThree != "") {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       initConnectivity();
 
+      int? valuecount =prefs.getInt("countdist");
+      valuecount = valuecount == null?0 : valuecount;
+
+      prefs.setInt("countdist", 0);
+
+
+
 
       if (checkInternet == true) {
         if (valueForSync == false) {
           prefs.remove("dist_key");
+          prefs.remove("countdist");
+
           await DefaultCacheManager().emptyCache();
           imageCache?.clear();
 
           if (msgForSync == "") {
             msgForSync = "Data Sync";
+            prefs.setInt("countdist", 0);
           }
           showAlertDialog(context, "Alert", msgForSync);
         } else {
           if (msgForSync == "") {
             msgForSync = "Data Sync";
+
+            prefs.setInt("countdist", 0);
+
+
           }
 
           showAlertDialog(context, "Alert", msgForSync);

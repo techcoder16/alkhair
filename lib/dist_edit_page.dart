@@ -371,25 +371,12 @@ List<String> _valueCompanies =[];
     Map<String, String> headers = {"Content-Type": "application/json"};
 
     int x = 0;
+
     for (var i=0;i< attachments!.length;i++) {
 
       if (attachments[i]!.path.contains("http")) {
 
         final file1 = await downloadAndSaveImage(attachments[i].path)!;
-
-
-
-        // final http.Response responseData =
-        //     await http.get(Uri.parse(assertiveURL + element.path));
-        // Uint8List uint8list = responseData.bodyBytes;
-        //
-        // uint8list = responseData.bodyBytes;
-        // var buffer = uint8list.buffer;
-        // ByteData byteData = ByteData.view(buffer);
-        // var tempDir = await getTemporaryDirectory();
-        // File file1 = await File('${tempDir.path}/img' + x.toString())
-        //     .writeAsBytes(buffer.asUint8List(
-        //         byteData.offsetInBytes, byteData.lengthInBytes));
 
 
 
@@ -412,7 +399,7 @@ List<String> _valueCompanies =[];
     request.headers.addAll(headers);
     request.fields.addAll(data);
 
-   // pr.show();
+   pr.show();
 
     http.StreamedResponse response = await request.send();
     final respStr = await response.stream.bytesToString();
@@ -439,8 +426,8 @@ List<String> _valueCompanies =[];
         print(e);
       }
     } else {
-      if (pr.isShowing()) {
-        pr.hide();
+      if ( await pr.isShowing()) {
+      await  pr.hide();
       }
 
       // error
@@ -569,12 +556,7 @@ List<String> _valueCompanies =[];
       fileOne = XFile(assertiveURL + spImage[0].trim());
       fileTwo = XFile(assertiveURL + spImage[1].trim());
       fileThree = XFile(assertiveURL + spImage[2].trim());
-      print(fileOne);
-      print(fileTwo);
-      print(fileThree);
-      print(spImage[0]);
-      print(spImage[1]);
-      print(spImage[2]);
+
 
     } catch (e) {
       print(e);
@@ -991,13 +973,13 @@ v2 =false;
                   onPressed: () {
                     final double? width = maxWidthController.text.isNotEmpty
                         ? double.parse(maxWidthController.text)
-                        : null;
+                        : 10;
                     final double? height = maxHeightController.text.isNotEmpty
                         ? double.parse(maxHeightController.text)
-                        : null;
+                        : 10;
                     final int? quality = qualityController.text.isNotEmpty
                         ? int.parse(qualityController.text)
-                        : null;
+                        : 10;
                     onPick(width, height, quality);
                     if (pr.isShowing()) {
                       pr.hide();
